@@ -1,0 +1,101 @@
+.root {
+  /* Colors from Material UI design */
+  -surface-primary: #1b1b1b; /* Gray 900 */
+  -surface-primary-accent: #616161; /* Gray A700 */
+  -surface-secondary: #263238; /* Blue Gray 900 */
+  -surface-secondary-accent: #455a64; /* Blue Gray A700 */
+  -primary: #4caf50; /* Green 500 */
+  -primary-accent: #00c853; /* Green A700 */
+  -neutral: #fafafa; /*  Gray 50 */
+  -neutral-accent: #bdbdbd; /*  Gray A400 */
+  -neutral-secondary: #9e9e9e; /*  Gray 500 */
+  -neutral-secondary-accent: #bdbdbd; /*  Gray A700 */
+}
+
+.body {
+  -fx-font-family:
+    Roboto,
+    -apple-system,
+    system-ui,
+    "Segoe UI";
+  -fx-font-size: 14px;
+
+  -fx-background-color: linear-gradient(to bottom right, -surface-primary, -surface-secondary);
+
+  -fx-border-radius: 8px;
+  -fx-padding: 20px;
+}
+
+.surface {
+  -fx-border-radius: 8px;
+  -fx-padding: 20px;
+}
+
+.tab-pane {
+  -fx-background-color: transparent;
+}
+
+.tab-pane .headers-region {
+  -fx-alignment: center;
+}
+
+.tab-pane .tab-header-background {
+  -fx-background-color: transparent;
+}
+
+.tab-pane .tab {
+  -fx-background-color: -surface-secondary;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-pref-width: 125px;
+  -fx-padding: 8px 16px;
+}
+
+.tab-pane .tab:selected {
+  -fx-border-width: 0px;
+  -fx-background-color: -surface-secondary-accent;
+}
+
+.text {
+  -fx-fill: -neutral;
+}
+
+.h1 {
+  -fx-font-size: 24px;
+  -fx-font-weight: bold;
+}
+.h2 {
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+.subheading {
+  -fx-fill: linear-gradient(to right, #f44336, #673ab7);
+}
+
+.text-field,
+.password-field {
+  -fx-background-color: -surface-primary;
+  -fx-border-color: -neutral-secondary;
+  -fx-border-width: 0.25px;
+  -fx-border-radius: 4px;
+  -fx-background-radius: 4px;
+
+  -fx-padding: 12px 16px;
+
+  -fx-text-fill: -neutral;
+  -fx-prompt-text-fill: -neutral-secondary;
+}
+
+.text-field:focused,
+.password-field:focused {
+  -fx-border-width: 0.5px;
+  -fx-background-color: -surface-secondary;
+}
+
+.button {
+  -fx-background-color: linear-gradient(to right, -primary, -primary-accent);
+  -fx-min-width: 164px;
+  -fx-padding: 8px 16px;
+  -fx-border-radius: 6px;
+  -fx-border-width: 0px;
+}
