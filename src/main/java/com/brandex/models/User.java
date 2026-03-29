@@ -1,11 +1,14 @@
 package com.brandex.models;
 
+import java.time.OffsetDateTime;
+
 public class User {
     private String id;
     private String username, email, firstName, lastName, role;
     private String passwordHash, prevHash1, prevHash2;
     private String otpHash;
     private boolean otpUsed, forcePwChange;
+    private OffsetDateTime created_at;
 
     public User() {}
 
@@ -21,6 +24,7 @@ public class User {
     public String getOtpHash() { return otpHash; }
     public boolean isOtpUsed() { return otpUsed; }
     public boolean isForcePwChange() { return forcePwChange; }
+    public OffsetDateTime getCreatedAt() { return created_at; }
 
     public void setId(String id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
@@ -34,4 +38,5 @@ public class User {
     public void setOtpHash(String otpHash) { this.otpHash = otpHash; }
     public void setOtpUsed(boolean otpUsed) { this.otpUsed = otpUsed; }
     public void setForcePwChange(boolean force) { this.forcePwChange = force; }
+    public void setCreatedAt(OffsetDateTime created_at) { this.created_at = created_at; }
 }
