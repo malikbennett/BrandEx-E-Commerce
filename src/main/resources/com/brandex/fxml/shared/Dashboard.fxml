@@ -26,13 +26,13 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                            <children>
-                              <Button minWidth="-Infinity" mnemonicParsing="false" text="Home" />
+                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showProducts" text="Home" />
                               <HBox fx:id="adminControls" spacing="8.0">
                                  <children>
                                     <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                    <Button minWidth="-Infinity" mnemonicParsing="false" text="Manage Products" />
-                                    <Button layoutX="120.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="Manage Orders" />
-                                    <Button layoutX="10.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="Manage Users" />
+                                    <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageProducts" text="Manage Products" />
+                                    <Button layoutX="120.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageOrders" text="Manage Orders" />
+                                    <Button layoutX="10.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageUsers" text="Manage Users" />
                                  </children>
                               </HBox>
                            </children>
@@ -42,7 +42,6 @@
                         <Region prefWidth="200.0" HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Need Help? Contact Us: 18006767" />
                               <ComboBox minWidth="-Infinity" promptText="English" />
                               <ComboBox layoutX="140.0" layoutY="10.0" minWidth="-Infinity" promptText="USD" />
                            </children>
@@ -66,13 +65,13 @@
                         <Region prefWidth="100.0" HBox.hgrow="ALWAYS" />
                         <HBox spacing="8.0">
                            <children>
-                              <Button minWidth="-Infinity" mnemonicParsing="false" text="Order Tracking" />
-                              <Button minWidth="-Infinity" mnemonicParsing="false" text="Cart">
+                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showOrders" text="Orders" />
+                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showCart" text="Cart">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
                                  </graphic>
                               </Button>
-                              <Button minWidth="-Infinity" mnemonicParsing="false" text="Account">
+                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showProfile" text="Account">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
                                  </graphic>
