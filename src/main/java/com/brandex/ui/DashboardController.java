@@ -1,6 +1,5 @@
 package com.brandex.ui;
 
-import com.brandex.App;
 import com.brandex.models.User;
 import com.brandex.service.AuthService;
 

@@ -1,5 +1,7 @@
 package com.brandex.datastructures;
 
-public class BTS {
+import com.brandex.models.Model;
+
+public class BTS<T extends Model> {
 
 }

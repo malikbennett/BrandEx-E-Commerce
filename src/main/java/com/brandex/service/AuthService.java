@@ -1,6 +1,5 @@
 package com.brandex.service;
 
-import com.brandex.App;
 import com.brandex.models.User;
 import com.brandex.repository.UserRepository;
 import com.brandex.utilities.OTPGenerator;

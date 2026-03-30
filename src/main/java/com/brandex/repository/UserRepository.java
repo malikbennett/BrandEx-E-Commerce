@@ -3,7 +3,6 @@ package com.brandex.repository;
 import com.brandex.models.User;
 import com.brandex.database.JDBC;
 import java.sql.*;
-import java.time.OffsetDateTime;
 
 
 // Interacts with the "users" table in the database to perform CRUD operations related to user accounts
@@ -15,7 +14,6 @@ public class UserRepository {
 
         if (rs.next()) {
             User user = new User();
-            user.setId(rs.getString("id"));
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setFirstName(rs.getString("first_name"));
@@ -27,7 +25,6 @@ public class UserRepository {
             user.setOtpUsed(rs.getBoolean("otp_used"));
             user.setRole(rs.getString("role"));
             user.setForcePwChange(rs.getBoolean("force_pw_change"));
-            user.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
             return user;
         }
         return null;
