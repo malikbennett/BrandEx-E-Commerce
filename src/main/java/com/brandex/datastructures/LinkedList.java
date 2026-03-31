@@ -1,5 +1,8 @@
 package com.brandex.datastructures;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import com.brandex.models.Model;
 
 public class LinkedList<T extends Model> {
@@ -8,7 +11,7 @@ public class LinkedList<T extends Model> {
 
     LinkedList() {}
 
-    public void add(T data) {
+    public void insert(T data) {
         try {
             if (this.head == null) { // If the head is empty then the list is empty
                 this.head = new Node<>();
@@ -26,7 +29,7 @@ public class LinkedList<T extends Model> {
         }
     }
 
-    public void remove(T data) {
+    public void delete(T data) {
         try {
             Node<T> current = this.head.getRight(); // start at the first element
             while (current != null) { // loop until the end of the list
@@ -47,11 +50,12 @@ public class LinkedList<T extends Model> {
         }
     }
 
-    public T find(int id) {
+    public T search(String key, Function<T, String> keyExtractor) {
         try {
             Node<T> current = this.head.getRight(); // start at the first element
             while (current != null) { // loop until the end of the list
-                if (current.getData().getId() == id) { // if we found the node
+                int cmp = key.compareToIgnoreCase(keyExtractor.apply(current.getData()));
+                if (cmp == 0) { // if we found the node
                     return current.getData(); // return the data
                 }
                 current = current.getRight();
@@ -61,4 +65,13 @@ public class LinkedList<T extends Model> {
         }
         return null;
     }
+
+    public void traverse(Consumer<T> action) {
+        Node<T> current = head.getRight();
+        while (current != null) {
+            action.accept(current.getData());
+            current = current.getRight();
+    }
+}
+
 }
