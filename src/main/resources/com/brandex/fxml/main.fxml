@@ -47,7 +47,7 @@
                               </Separator>
                               <TextField fx:id="loginEmailField" promptText="Enter Email" styleClass="text-field" />
                               <PasswordField fx:id="loginPasswordField" promptText="Enter Password" />
-                              <Label fx:id="LoginErrorLabel" style="-fx-text-fill: #f44336; -fx-min-height: 0;" />
+                              <Label fx:id="loginErrorLabel" style="-fx-text-fill: #f44336; -fx-min-height: 0;" />
                               <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#handleLogin" styleClass="auth-btn" text="Login" textAlignment="CENTER">
                                  <VBox.margin>
                                     <Insets />
