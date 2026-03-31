@@ -8,7 +8,15 @@ import java.sql.*;
 // Interacts with the "users" table in the database to perform CRUD operations related to user accounts
 public class UserRepository {
 
-    public User findUser(String condition, String value) throws SQLException {
+    private static UserRepository instance;
+
+    public static UserRepository getInstance() {
+        if (instance == null)
+            instance = new UserRepository();
+        return instance;
+    }
+
+    public User getUser(String condition, String value) throws SQLException {
         String sql = "SELECT * FROM users WHERE " + condition + " = ?";
         ResultSet rs = JDBC.query(sql, value);
 
@@ -48,7 +56,7 @@ public class UserRepository {
         JDBC.execute(sql, newHash, prev1, prev2, username);
     }
 
-    public void markOtpUsed(String username) throws SQLException {
+    public void updateOtpUsed(String username) throws SQLException {
         String sql = "UPDATE users SET otp_used = true WHERE username = ?";
         JDBC.execute(sql, username);
     }

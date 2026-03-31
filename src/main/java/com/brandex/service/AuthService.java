@@ -9,37 +9,44 @@ import com.brandex.utilities.PasswordHasher;
 public class AuthService {
 
     private static AuthService instance;
-    private final UserRepository userRepo = new UserRepository();
+    private final UserRepository userRepo = UserRepository.getInstance();
     private User currentUser;
 
-    private AuthService() {}
+    private AuthService() {
+    }
 
     public static AuthService getInstance() {
-        if (instance == null) instance = new AuthService();
+        if (instance == null)
+            instance = new AuthService();
         return instance;
     }
 
-    public User getCurrentUser() { return currentUser; }
+    public User getCurrentUser() {
+        return currentUser;
+    }
 
     // Returns the logged-in user, or throws with a readable message
     public User login(String email, String password) throws Exception {
-        User user = userRepo.findUser("email", email);
+
+        User user = userRepo.getUser("email", email);
 
         if (user == null)
             throw new Exception("Email not found.");
+
         if (!PasswordHasher.matches(password, user.getPasswordHash()))
             throw new Exception("Incorrect password.");
 
         currentUser = user;
         return user;
     }
+
     // Returns the OTP so you can email it
     public String register(String firstName, String lastName, String email, String username) throws Exception {
 
-        if (userRepo.findUser("email", email) != null)
+        if (userRepo.getUser("email", email) != null)
             throw new Exception("An account with this email already exists.");
 
-        if (userRepo.findUser("username", username) != null)
+        if (userRepo.getUser("username", username) != null)
             throw new Exception("An account with this username already exists.");
 
         String otp = OTPGenerator.generate();
@@ -60,30 +67,33 @@ public class AuthService {
         currentUser = user;
         return otp;
     }
+
     // Verifies the OTP and marks it as used if valid
     public void verifyOtp(String username, String enteredOtp) throws Exception {
-        User user = userRepo.findUser("username", username);
-        if (user == null || !PasswordHasher.matches(enteredOtp, user.getOtpHash())) {
-            System.err.println("OTP is invalid");
+
+        User user = userRepo.getUser("username", username);
+
+        if (user == null || !PasswordHasher.matches(enteredOtp, user.getOtpHash()))
             throw new Exception("Invalid OTP.");
-        }
-        if (user.isOtpUsed()) {
-            System.err.println("OTP has already been used");
+
+        if (user.isOtpUsed())
             throw new Exception("OTP has already been used.");
-        }
-        userRepo.markOtpUsed(username);
+
+        userRepo.updateOtpUsed(username);
     }
+
     // Changes the user's password
     public void changePassword(String username, String oldPassword, String newPassword) throws Exception {
-        User user = userRepo.findUser("username", username);
+
+        User user = userRepo.getUser("username", username);
 
         if (!PasswordHasher.matches(oldPassword, user.getPasswordHash()))
             throw new Exception("Current password is incorrect.");
 
         String newHash = PasswordHasher.hash(newPassword);
 
-        // Check password history
-        if (newHash.equals(user.getPasswordHash()) || newHash.equals(user.getPrevHash1()) || newHash.equals(user.getPrevHash2()))
+        if (newHash.equals(user.getPasswordHash()) || newHash.equals(user.getPrevHash1())
+                || newHash.equals(user.getPrevHash2()))
             throw new Exception("New password cannot match your last two passwords.");
 
         userRepo.updatePassword(username, newHash, user.getPasswordHash(), user.getPrevHash1());
@@ -92,5 +102,7 @@ public class AuthService {
             currentUser.setPasswordHash(newHash);
     }
 
-    public void logout() { currentUser = null; }
+    public void logout() {
+        currentUser = null;
+    }
 }

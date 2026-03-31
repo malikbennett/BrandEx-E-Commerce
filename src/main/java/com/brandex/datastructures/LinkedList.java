@@ -9,69 +9,62 @@ public class LinkedList<T extends Model> {
     private Node<T> head = null; // starting point of list
     private Node<T> tail = null; // points the last element in the list
 
-    LinkedList() {}
+    public LinkedList() {}
 
     public void insert(T data) {
-        try {
-            if (this.head == null) { // If the head is empty then the list is empty
-                this.head = new Node<>();
-                Node<T> nodeModel = new Node<>(data);
-                this.head.setRight(nodeModel); // add a new node to the head's right ptr
-                this.tail = nodeModel; // last element is now the tail
-                this.head.setLeft(this.tail); //previous ptr of head is always the tail
-            } else { // since the head isnt empty this is atleast 1 element inside the list
-                this.tail.setRight(new Node<>(data)); // add a new node to the tail's right ptr
-                this.tail.getRight().setLeft(this.tail); // set the new node's previous ptr
-                this.tail = this.tail.getRight(); // update the tail to the new node
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (data == null) return;
+        Node<T> newNode = new Node<>(data);
+        if (this.head == null) {
+            this.head = newNode;
+            this.tail = newNode;
+        } else {
+            this.tail.setRight(newNode);
+            newNode.setLeft(this.tail);
+            this.tail = newNode;
         }
     }
 
     public void delete(T data) {
-        try {
-            Node<T> current = this.head.getRight(); // start at the first element
-            while (current != null) { // loop until the end of the list
-                if (current.getData().getId() == data.getId()) { // if we found the node to remove
-                    if (current == this.tail) { // if its the tail we need to update the tail ptr
-                        this.tail = current.getLeft(); // update tail to previous node
-                        this.tail.setRight(null); // set new tail's right ptr to null
-                    } else { // if its not the tail we just need to bypass it
-                        current.getLeft().setRight(current.getRight()); // bypass current node by linking previous to next
-                        current.getRight().setLeft(current.getLeft()); // link next node back to previous
-                    }
-                    break;
+        if (this.head == null || data == null) return;
+        Node<T> current = this.head;
+        while (current != null) {
+            if (current.getData().getId() != null && current.getData().getId().equals(data.getId())) {
+                if (current == this.head && current == this.tail) {
+                    this.head = null;
+                    this.tail = null;
+                } else if (current == this.head) {
+                    this.head = current.getRight();
+                    this.head.setLeft(null);
+                } else if (current == this.tail) {
+                    this.tail = current.getLeft();
+                    this.tail.setRight(null);
+                } else {
+                    current.getLeft().setRight(current.getRight());
+                    current.getRight().setLeft(current.getLeft());
                 }
-                current = current.getRight();
+                break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            current = current.getRight();
         }
     }
 
     public T search(String key, Function<T, String> keyExtractor) {
-        try {
-            Node<T> current = this.head.getRight(); // start at the first element
-            while (current != null) { // loop until the end of the list
-                int cmp = key.compareToIgnoreCase(keyExtractor.apply(current.getData()));
-                if (cmp == 0) { // if we found the node
-                    return current.getData(); // return the data
-                }
-                current = current.getRight();
+        if (key == null) return null;
+        Node<T> current = this.head;
+        while (current != null) {
+            if (key.equalsIgnoreCase(keyExtractor.apply(current.getData()))) {
+                return current.getData();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            current = current.getRight();
         }
         return null;
     }
 
     public void traverse(Consumer<T> action) {
-        Node<T> current = head.getRight();
+        Node<T> current = this.head;
         while (current != null) {
             action.accept(current.getData());
             current = current.getRight();
+        }
     }
-}
-
 }
