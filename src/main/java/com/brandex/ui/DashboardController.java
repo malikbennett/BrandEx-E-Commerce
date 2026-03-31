@@ -1,8 +1,8 @@
 package com.brandex.ui;
 
-import com.brandex.App;
 import com.brandex.models.User;
 import com.brandex.service.AuthService;
+import com.brandex.service.ProductService;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +17,7 @@ public class DashboardController {
     @FXML private StackPane contentArea;
     @FXML private HBox adminControls;
 
+    ProductService productService = ProductService.getInstance();
     User user = AuthService.getInstance().getCurrentUser();
     // Shared views
     @FXML private void showProducts() { loadView("shared/ProductCatalog"); }
@@ -29,7 +30,7 @@ public class DashboardController {
     @FXML private void showManageOrders()     { loadView("admin/ManageOrders"); }
     @FXML private void showManageUsers()  { loadView("admin/ManageUsers"); }
     @FXML private void showProductForm()  { loadView("admin/ProductForm"); }
-
+    // allows for different views to be loaded
     private void loadView(String fxml) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -45,7 +46,9 @@ public class DashboardController {
     // this runs automatically when Dashboard.fxml loads
     @FXML
     public void initialize() {
+        // sets the welcome label to the current user's first name
         welcomeLabel.setText("Welcome, " + user.getFirstName());
+        // checks if the current user is an admin
         if (user.getRole().equals("admin")) {
             adminControls.setVisible(true);
             adminControls.setManaged(true);
@@ -53,6 +56,9 @@ public class DashboardController {
             adminControls.setVisible(false);
             adminControls.setManaged(false);
         }
+        // loads the product catalog view
         loadView("shared/ProductCatalog");
+        // loads products from the database
+        productService.loadProducts();
     }
 }
