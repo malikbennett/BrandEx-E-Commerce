@@ -11,6 +11,7 @@ public class ProductService {
     private final BST<Product> productTree = new BST<>(
             (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
     private final ProductRepository productRepo = ProductRepository.getInstance();
+    private String searchQuery = "";
 
     public static ProductService getInstance() {
         if (instance == null)
@@ -19,26 +20,28 @@ public class ProductService {
     }
 
     public void loadProducts() {
-        productRepo.listProducts().traverse(product -> {
-            productTree.insert(product);
+        this.productRepo.listProducts().traverse(product -> {
+            this.productTree.insert(product);
         });
     }
 
     public void addProduct(Product product) throws Exception {
         if (product == null)
             throw new Exception("Product cannot be null.");
-        productTree.insert(product);
+        this.productTree.insert(product);
     }
 
     public LinkedList<Product> searchByKeyword(String keyword) throws Exception {
 
-        if (keyword == null || keyword.isEmpty())
-            throw new Exception("Keyword cannot be null or empty.");
+        if (keyword == null)
+            throw new Exception("Keyword cannot be null.");
+        if (keyword.isEmpty())
+            keyword = this.searchQuery;
 
         LinkedList<Product> results = new LinkedList<>();
         String lowerKeyword = keyword.toLowerCase();
 
-        productTree.traverse(p -> {
+        this.productTree.traverse(p -> {
             if (p.getName().toLowerCase().contains(lowerKeyword)) {
                 results.insert(p);
             }
@@ -46,4 +49,13 @@ public class ProductService {
 
         return results;
     }
+
+    public String getSearchQuery() {
+        return this.searchQuery;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
+
 }

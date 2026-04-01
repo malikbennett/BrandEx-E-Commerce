@@ -13,29 +13,43 @@ import javafx.scene.control.Label;
 
 public class AuthController {
     // Login fields
-    @FXML private TextField loginEmailField;
-    @FXML private PasswordField loginPasswordField;
-    @FXML private Label loginErrorLabel;
+    @FXML
+    private TextField loginEmailField;
+    @FXML
+    private PasswordField loginPasswordField;
+    @FXML
+    private Label loginErrorLabel;
     // Registration fields
-    @FXML private TextField registerEmailField;
-    @FXML private TextField firstNameField;
-    @FXML private TextField lastNameField;
-    @FXML private TextField usernameField;
-    @FXML private Label registerErrorLabel;
+    @FXML
+    private TextField registerEmailField;
+    @FXML
+    private TextField firstNameField;
+    @FXML
+    private TextField lastNameField;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private Label registerErrorLabel;
     // OTP verification field
     @FXML
     private TextField otpField;
-    @FXML private Label otpErrorLabel;
+    @FXML
+    private Label otpErrorLabel;
     // Change password fields
-    @FXML private PasswordField currentPasswordField;
-    @FXML private PasswordField newPasswordField;
-    @FXML private PasswordField confirmPasswordField;
-    @FXML private Label changePasswordErrorLabel;
+    @FXML
+    private PasswordField currentPasswordField;
+    @FXML
+    private PasswordField newPasswordField;
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Label changePasswordErrorLabel;
     // AuthService instance for handling authentication logic
     private final AuthService authService = AuthService.getInstance();
 
     @FXML
     private void handleLogin() {
+
         String email = loginEmailField.getText().trim();
         String password = loginPasswordField.getText();
 
@@ -52,13 +66,17 @@ public class AuthController {
             ThrowError.errorLabel(loginErrorLabel, e.getMessage());
         }
     }
-    // Handles user registration, generates OTP, saves user with OTP hash, and sends OTP email
+
+    // Handles user registration, generates OTP, saves user with OTP hash, and sends
+    // OTP email
     @FXML
     private void handleRegister() {
+
         String email = registerEmailField.getText().trim();
         String firstName = firstNameField.getText().trim();
         String lastName = lastNameField.getText().trim();
         String username = usernameField.getText().trim();
+
         // Basic input validation for empty fields and email format
         if (firstName.isEmpty() || lastName.isEmpty()) {
             ThrowError.errorLabel(registerErrorLabel, "Please fill in all fields.");
@@ -71,21 +89,23 @@ public class AuthController {
         }
         try {
             // Call the register method and get the generated OTP
-            String otp = authService.register( firstName, lastName, email, username);
+            String otp = authService.register(firstName, lastName, email, username);
             // Send the OTP to the user's email
             EmailSender.send(authService.getCurrentUser().getEmail(),
-                "Your BrandEx OTP",
-                "Your one-time password is: " + otp + "\n\nDo not share this with anyone."
-            );
+                    "Your BrandEx OTP",
+                    "Your one-time password is: " + otp + "\n\nDo not share this with anyone.");
             // Navigate to OTP verification screen
             App.setRoot("auth/OTPVerify");
         } catch (Exception e) {
             ThrowError.errorLabel(registerErrorLabel, e.getMessage());
         }
     }
-    // Verifies the entered OTP against the stored hash and marks it as used if valid
+
+    // Verifies the entered OTP against the stored hash and marks it as used if
+    // valid
     @FXML
     private void handleVerifyOtp() {
+
         String otp = otpField.getText().trim();
         String username = authService.getCurrentUser().getUsername();
 
@@ -96,9 +116,12 @@ public class AuthController {
             ThrowError.errorLabel(otpErrorLabel, e.getMessage());
         }
     }
-    // Handles password change, checks for matching new passwords and password history, and updates the password
+
+    // Handles password change, checks for matching new passwords and password
+    // history, and updates the password
     @FXML
     private void handleChangePassword() {
+
         String currentPassword = currentPasswordField.getText().trim();
         String newPassword = newPasswordField.getText().trim();
         String confirmPassword = confirmPasswordField.getText().trim();

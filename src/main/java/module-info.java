@@ -5,9 +5,12 @@ module com.brandex {
     requires java.sql;
     requires org.postgresql.jdbc;
     requires jakarta.mail;
+    requires atlantafx.base;
+    requires org.controlsfx.controls;
 
     opens com.brandex to javafx.fxml, javafx.graphics;
     opens com.brandex.ui to javafx.fxml;
     opens com.brandex.models to javafx.fxml;
+
     exports com.brandex;
 }
