@@ -8,6 +8,9 @@ public class Order extends Model {
     private String paymentMethod;
     private double total;
 
+    public Order() {
+    }
+
     public String getUserId() {
         return this.userId;
     }

@@ -2,6 +2,7 @@ package com.brandex.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 
 import com.brandex.database.JDBC;
 import com.brandex.datastructures.LinkedList;
@@ -32,6 +33,7 @@ public class ProductRepository {
                 product.setPrice(rs.getDouble("price"));
                 product.setRating(rs.getDouble("rating"));
                 product.setStock(rs.getInt("stock"));
+                product.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
 
                 products.insert(product);
             }

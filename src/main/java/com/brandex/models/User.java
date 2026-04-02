@@ -1,7 +1,7 @@
 package com.brandex.models;
 
 public class User extends Model {
-    private String username, email, firstName, lastName, role;
+    private String username, email, firstName, lastName, role, phoneNumber, shippingAddress, profileImgURL;
     private String passwordHash, prevHash1, prevHash2;
     private String otpHash;
     private boolean otpUsed, forcePwChange;
@@ -23,6 +23,18 @@ public class User extends Model {
 
     public String getLastName() {
         return this.lastName;
+    }
+
+    public String getPhoneNumber() {
+        return this.phoneNumber;
+    }
+
+    public String getShippingAddress() {
+        return this.shippingAddress;
+    }
+
+    public String getProfileImgURL() {
+        return this.profileImgURL;
     }
 
     public String getPasswordHash() {
@@ -67,6 +79,18 @@ public class User extends Model {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public void setProfileImgURL(String url) {
+        this.profileImgURL = url;
     }
 
     public void setPasswordHash(String hash) {

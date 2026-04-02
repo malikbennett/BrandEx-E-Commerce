@@ -7,7 +7,7 @@ public class Cart extends Model {
     private double total;
     private OffsetDateTime updatedAt;
 
-    Cart() {
+    public Cart() {
     }
 
     public String getUserId() {

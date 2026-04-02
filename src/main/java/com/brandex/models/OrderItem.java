@@ -5,6 +5,9 @@ public class OrderItem extends Model {
     private String productId;
     private int quantity;
 
+    public OrderItem() {
+    }
+
     public String getCartId() {
         return this.cartId;
     }
