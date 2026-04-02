@@ -1,26 +1,31 @@
 package com.brandex.datastructures;
 
 public class Stack<T> {
-    private class Node {
-        T data;
-        Node next;
-        Node(T data) { this.data = data; }
+    private LinkedList<T> list = new LinkedList<>((a, b) -> 0);
+
+    Stack() {
     }
-    private Node top;
 
     public void push(T data) {
-        Node newNode = new Node(data);
-        newNode.next = top;
-        top = newNode;
+        this.list.insert(data);
     }
 
     public T pop() {
-        if (isEmpty()) return null;
-        T data = top.data;
-        top = top.next;
+        T data = this.list.removeTail();
         return data;
     }
 
-    public boolean isEmpty() { return top == null; }
-    public void clear() { top = null; }
+    public T peek() {
+        if (isEmpty())
+            return null;
+        return list.getTail().getData();
+    }
+
+    public boolean isEmpty() {
+        return list.getTail() == null;
+    }
+
+    public void clear() {
+        this.list = new LinkedList<>((a, b) -> 0);
+    }
 }
