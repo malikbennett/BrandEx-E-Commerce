@@ -1,32 +1,26 @@
 package com.brandex.models;
 
-import java.time.OffsetDateTime;
 
-public class User {
-    private String id;
+public class User extends Model {
     private String username, email, firstName, lastName, role;
     private String passwordHash, prevHash1, prevHash2;
     private String otpHash;
     private boolean otpUsed, forcePwChange;
-    private OffsetDateTime created_at;
 
     public User() {}
 
-    public String getId() { return id; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    public String getPasswordHash() { return passwordHash; }
-    public String getPrevHash1() { return prevHash1; }
-    public String getPrevHash2() { return prevHash2; }
-    public String getRole() { return role; }
-    public String getOtpHash() { return otpHash; }
-    public boolean isOtpUsed() { return otpUsed; }
-    public boolean isForcePwChange() { return forcePwChange; }
-    public OffsetDateTime getCreatedAt() { return created_at; }
+    public String getUsername() { return this.username; }
+    public String getEmail() { return this.email; }
+    public String getFirstName() { return this.firstName; }
+    public String getLastName() { return this.lastName; }
+    public String getPasswordHash() { return this.passwordHash; }
+    public String getPrevHash1() { return this.prevHash1; }
+    public String getPrevHash2() { return this.prevHash2; }
+    public String getRole() { return this.role; }
+    public String getOtpHash() { return this.otpHash; }
+    public boolean isOtpUsed() { return this.otpUsed; }
+    public boolean isForcePwChange() { return this.forcePwChange; }
 
-    public void setId(String id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
     public void setEmail(String email) { this.email = email; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -38,5 +32,4 @@ public class User {
     public void setOtpHash(String otpHash) { this.otpHash = otpHash; }
     public void setOtpUsed(boolean otpUsed) { this.otpUsed = otpUsed; }
     public void setForcePwChange(boolean force) { this.forcePwChange = force; }
-    public void setCreatedAt(OffsetDateTime created_at) { this.created_at = created_at; }
 }

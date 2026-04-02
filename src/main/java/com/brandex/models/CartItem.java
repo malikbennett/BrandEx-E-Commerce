@@ -1,5 +1,5 @@
 package com.brandex.models;
 
-public class CartItem {
+public class CartItem extends Model {
 
 }

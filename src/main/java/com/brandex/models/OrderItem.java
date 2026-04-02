@@ -1,5 +1,5 @@
 package com.brandex.models;
 
-public class OrderItem {
+public class OrderItem extends Model{
 
 }

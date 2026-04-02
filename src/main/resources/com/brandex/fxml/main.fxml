@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane prefHeight="576.0" prefWidth="1024.0" styleClass="body" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.AuthController">
+<StackPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.AuthController">
    <children>
       <VBox maxHeight="-Infinity" maxWidth="450.0" minWidth="250.0" prefWidth="350.0" spacing="16.0" StackPane.alignment="CENTER">
          <children>
@@ -47,7 +47,7 @@
                               </Separator>
                               <TextField fx:id="loginEmailField" promptText="Enter Email" styleClass="text-field" />
                               <PasswordField fx:id="loginPasswordField" promptText="Enter Password" />
-                              <Label fx:id="LoginErrorLabel" style="-fx-text-fill: #f44336; -fx-min-height: 0;" />
+                              <Label fx:id="loginErrorLabel" style="-fx-text-fill: #f44336; -fx-min-height: 0;" />
                               <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#handleLogin" styleClass="auth-btn" text="Login" textAlignment="CENTER">
                                  <VBox.margin>
                                     <Insets />
