@@ -3,8 +3,10 @@ package com.brandex.command;
 import com.brandex.models.CartItem;
 import com.brandex.datastructures.LinkedList;
 import com.brandex.models.Cart;
+import com.brandex.models.Product;
 import com.brandex.repository.CartRepository;
 import com.brandex.service.CartService;
+import com.brandex.service.ProductService;
 
 public class CartAddCommand implements Command {
     private final LinkedList<CartItem> cartList;
@@ -24,20 +26,31 @@ public class CartAddCommand implements Command {
 
     @Override
     public void execute() {
+        Product product = ProductService.getInstance().searchById(this.productId);
+        double price = (product != null) ? product.getPrice() : 0.0;
+
         // find the item that was added
         CartItem item = this.cartList.search(this.productId, CartItem::getProductId);
         // if it doesnt exist then create it
         if (item == null) {
-            cartRepo.createCartItem(this.cart.getId(), this.productId, this.quantity);
-            item = cartRepo.getCartItem("cart_id", this.cart.getId());
+            double totalItemPrice = price * this.quantity;
+            cartRepo.createCartItem(this.cart.getId(), this.productId, this.quantity, totalItemPrice);
+            item = cartRepo.getCartItemByProduct(this.cart.getId(), this.productId);
             this.cartList.insert(item);
             isNewItem = true;
         } else { // if the item exist then update the quantity
             previousQuantity = item.getQuantity();
-            cartRepo.updateCartItem(item.getId(), "quantity", String.valueOf(this.quantity + previousQuantity));
-            item.setQuantity(this.quantity + previousQuantity);
+            int newQuantity = this.quantity + previousQuantity;
+            double newTotalItemPrice = price * newQuantity;
+
+            cartRepo.updateCartItem(item.getId(), "quantity", newQuantity);
+            cartRepo.updateCartItem(item.getId(), "total_price", newTotalItemPrice);
+
+            item.setQuantity(newQuantity);
+            item.setTotalPrice(newTotalItemPrice);
             isNewItem = false;
         }
+        CartService.getInstance().syncCartTotalWithDatabase();
     }
 
     @Override
@@ -50,9 +63,17 @@ public class CartAddCommand implements Command {
                 this.cartList.remove(item);
                 cartRepo.deleteCartItem(item.getId());
             } else { // if it was an existing item then update the quantity
-                cartRepo.updateCartItem(item.getId(), "quantity", String.valueOf(this.previousQuantity));
+                Product product = ProductService.getInstance().searchById(this.productId);
+                double price = (product != null) ? product.getPrice() : 0.0;
+                double previousTotal = price * this.previousQuantity;
+
+                cartRepo.updateCartItem(item.getId(), "quantity", this.previousQuantity);
+                cartRepo.updateCartItem(item.getId(), "total_price", previousTotal);
+
                 item.setQuantity(this.previousQuantity);
+                item.setTotalPrice(previousTotal);
             }
         }
+        CartService.getInstance().syncCartTotalWithDatabase();
     }
 }

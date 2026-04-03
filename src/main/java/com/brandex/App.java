@@ -2,14 +2,12 @@ package com.brandex;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import atlantafx.base.theme.CupertinoDark;
-import atlantafx.base.theme.CupertinoLight;
+// import atlantafx.base.theme.CupertinoLight;
 
 import java.io.IOException;
 

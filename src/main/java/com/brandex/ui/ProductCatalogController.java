@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.brandex.models.Product;
+import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 import com.brandex.utilities.ImageLoader;
 
@@ -91,7 +92,7 @@ public class ProductCatalogController {
         Tile footer = new Tile(String.format("$%.2f", product.getPrice()), null);
         Button addToCart = new Button("Add");
         addToCart.setOnAction(e -> {
-            // Handle add to cart action
+            CartService.getInstance().addItem(product.getId(), 1);
         });
         footer.setAction(addToCart);
         card.setFooter(footer); // sets the price and add to cart button as the footer of the card

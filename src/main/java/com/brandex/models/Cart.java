@@ -4,7 +4,7 @@ import java.time.OffsetDateTime;
 
 public class Cart extends Model {
     private String userId;
-    private double total;
+    private double totalPrice;
     private OffsetDateTime updatedAt;
 
     public Cart() {
@@ -14,8 +14,8 @@ public class Cart extends Model {
         return this.userId;
     }
 
-    public double getTotal() {
-        return this.total;
+    public double getTotalPrice() {
+        return this.totalPrice;
     }
 
     public OffsetDateTime getUpdatedAt() {
@@ -26,8 +26,8 @@ public class Cart extends Model {
         this.userId = userId;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
+    public void setTotalPrice(double total) {
+        this.totalPrice = total;
     }
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {

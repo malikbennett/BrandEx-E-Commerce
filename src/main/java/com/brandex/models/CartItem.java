@@ -5,6 +5,7 @@ public class CartItem extends Model {
     private String cartId;
     private String productId;
     private int quantity;
+    private double totalPrice;
 
     public CartItem() {
     }
@@ -21,6 +22,10 @@ public class CartItem extends Model {
         return this.quantity;
     }
 
+    public double getTotalPrice() {
+        return this.totalPrice;
+    }
+
     public void setCartId(String cartId) {
         this.cartId = cartId;
     }
@@ -31,5 +36,9 @@ public class CartItem extends Model {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

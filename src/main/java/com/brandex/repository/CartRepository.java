@@ -41,7 +41,7 @@ public class CartRepository {
                 Cart cart = new Cart();
                 cart.setId(rs.getString("id"));
                 cart.setUserId(rs.getString("user_id"));
-                cart.setTotal(rs.getDouble("total_price"));
+                cart.setTotalPrice(rs.getDouble("total_price"));
                 cart.setUpdatedAt(rs.getObject("updated_at", OffsetDateTime.class));
                 return cart;
             }
@@ -63,6 +63,7 @@ public class CartRepository {
                 item.setCartId(rs.getString("cart_id"));
                 item.setProductId(rs.getString("product_id"));
                 item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("total_price"));
                 item.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
                 items.insert(item);
             }
@@ -86,6 +87,7 @@ public class CartRepository {
                 item.setCartId(rs.getString("cart_id"));
                 item.setProductId(rs.getString("product_id"));
                 item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("total_price"));
                 item.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
                 return item;
             }
@@ -96,18 +98,40 @@ public class CartRepository {
         return null;
     }
 
-    public void createCartItem(String cartId, String productId, int quantity) {
-        String sql = "INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (?::uuid, ?::uuid, ?)";
+    public CartItem getCartItemByProduct(String cartId, String productId) {
+        String sql = "SELECT * FROM cart_item WHERE cart_id = ?::uuid AND product_id = ?::uuid";
         try {
-            JDBC.execute(sql, cartId, productId, quantity);
+            ResultSet rs = JDBC.query(sql, cartId, productId);
+            if (rs.next()) {
+                CartItem item = new CartItem();
+                item.setId(rs.getString("id"));
+                item.setCartId(rs.getString("cart_id"));
+                item.setProductId(rs.getString("product_id"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("total_price"));
+                item.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
+                return item;
+            }
+        } catch (Exception e) {
+            System.err.println("Database Error: Failed to fetch cart item. " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void createCartItem(String cartId, String productId, int quantity, double totalPrice) {
+        String sql = "INSERT INTO cart_item (cart_id, product_id, quantity, total_price) VALUES (?::uuid, ?::uuid, ?, ?)";
+        try {
+            JDBC.execute(sql, cartId, productId, quantity, totalPrice);
         } catch (Exception e) {
             System.err.println("Database Error: Failed to create cart item. " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void updateCartItem(String cartItemId, String condition, String value) {
-        String sql = "UPDATE cart_item SET " + condition + " = ? WHERE id = ?::uuid";
+    public void updateCartItem(String cartItemId, String condition, Object value) {
+        String cast = condition.equals("quantity") ? "::integer" : "";
+        String sql = "UPDATE cart_item SET " + condition + " = ?" + cast + " WHERE id = ?::uuid";
         try {
             JDBC.execute(sql, value, cartItemId);
         } catch (Exception e) {
@@ -122,6 +146,16 @@ public class CartRepository {
             JDBC.execute(sql, cartItemId);
         } catch (Exception e) {
             System.err.println("Database Error: Failed to delete cart item. " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCartTotalPrice(String cartId, double totalPrice) {
+        String sql = "UPDATE cart SET total_price = ? WHERE id = ?::uuid";
+        try {
+            JDBC.execute(sql, totalPrice, cartId);
+        } catch (Exception e) {
+            System.err.println("Database Error: Failed to update cart total price. " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -140,7 +140,7 @@ public class AuthController {
 
     @FXML
     private void initialize() {
-        loginEmailField.setText("bennettmalik213@gmail.com");
-        loginPasswordField.setText("password");
+        loginEmailField.setText("");
+        loginPasswordField.setText("");
     }
 }

@@ -50,6 +50,7 @@ public class CartService {
 
     // Add item to cart
     public void addItem(String productId, int qty) {
+        System.out.println("Adding item to cart: " + productId + " " + qty);
         Command cmd = new CartAddCommand(this.cart, productId, qty);
         cmd.execute();
         undoStack.push(cmd);
@@ -58,10 +59,16 @@ public class CartService {
 
     // Remove item from cart
     public void removeItem(String productId, int qty) {
+        System.out.println("Removing item from cart: " + productId + " " + qty);
         Command cmd = new CartRemoveCommand(this.cart, productId, qty);
         cmd.execute();
         undoStack.push(cmd);
         redoStack.clear();
+    }
+
+    public void checkout() {
+        System.out.println("Checking out cart");
+        // cartRepo.checkout(this.currentCart.getId());
     }
 
     public void undo() {
@@ -82,10 +89,16 @@ public class CartService {
         }
     }
 
-    // public double getCartTotal() {
-    // final double[] total = { 0.0 };
-    // cart.traverse(item -> total[0] += item.getLineTotal());
-    // return total[0];
-    // }
+    public double getCartTotal() {
+        final double[] total = { 0.0 };
+        cart.traverse(item -> total[0] += item.getTotalPrice());
+        return total[0];
+    }
+
+    public void syncCartTotalWithDatabase() {
+        if (currentCart != null) {
+            cartRepo.updateCartTotalPrice(currentCart.getId(), getCartTotal());
+        }
+    }
 
 }
