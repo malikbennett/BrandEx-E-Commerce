@@ -4,14 +4,13 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.brandex.models.Model;
-
-public class BST<T extends Model> {
-    private Node<T> root;
+public class BST<T> {
+    private Node<T> root = null; // starting point of the tree
     private Comparator<T> comparator;
 
     private Node<T> insertRecursive(Node<T> node, T data) {
-        if (data == null) return node;
+        if (data == null)
+            return node;
         if (node == null)
             return new Node<T>(data);
 
@@ -49,15 +48,15 @@ public class BST<T extends Model> {
         }
     }
 
-    private Node<T> deleteRecursive(Node<T> node, T data) {
+    private Node<T> removeRecursive(Node<T> node, T data) {
         if (node == null || data == null)
             return node; // same logic, the previous node was a leaf node so we can just remove its
-                        // parent, i.e setting the parent pointer to null
+                         // parent, i.e setting the parent pointer to null
         int cmp = comparator.compare(data, node.getData()); // same logic
         if (cmp < 0) { // same logic
-            node.setLeft(deleteRecursive(node.getLeft(), data));
+            node.setLeft(removeRecursive(node.getLeft(), data));
         } else if (cmp > 0) {
-            node.setRight(deleteRecursive(node.getRight(), data));
+            node.setRight(removeRecursive(node.getRight(), data));
         } else { // we found the match
             // if the node that needs to be deleted has a child, one, then we simply replace
             // it with its child
@@ -80,7 +79,7 @@ public class BST<T extends Model> {
             // replaces its value
             node.setData(successor.getData());
             // Now we want to remove the successor from the right side
-            node.setRight(deleteRecursive(node.getRight(), successor.getData()));
+            node.setRight(removeRecursive(node.getRight(), successor.getData()));
         }
         return node;
     }
@@ -121,7 +120,8 @@ public class BST<T extends Model> {
         // This is just comparing the min and max to the current node
         int cmpMin = comparator.compare(min, node.getData());
         int cmpMax = comparator.compare(max, node.getData());
-        // If current node is greater than min, there might be values in the left subtree
+        // If current node is greater than min, there might be values in the left
+        // subtree
         if (cmpMin < 0) {
             getRangeRecursive(node.getLeft(), min, max, action);
         }
@@ -136,7 +136,6 @@ public class BST<T extends Model> {
     }
 
     public BST(Comparator<T> comparator) {
-        this.root = null;
         this.comparator = comparator;
     }
 
@@ -147,22 +146,26 @@ public class BST<T extends Model> {
     public T search(String key, Function<T, String> keyExtractor) {
         return searchRecursive(this.root, key, keyExtractor);
     }
-
-    public void delete(T data) {
-        this.root = deleteRecursive(this.root, data);
+    
+    public void remove(T data) {
+        this.root = removeRecursive(this.root, data);
     }
+
     // in order traversal
     public void inOrder(Consumer<T> action) {
         inOrderRecursive(root, action);
     }
+
     // pre order traversal, dont really need but i did it for practice
     public void preOrder(Consumer<T> action) {
         preOrderRecursive(root, action);
     }
+
     // post order traversal, dont really need but i did it for practice as well
     public void postOrder(Consumer<T> action) {
         postOrderRecursive(root, action);
     }
+
     // get range traversal
     public void getRange(T min, T max, Consumer<T> action) {
         getRangeRecursive(root, min, max, action);

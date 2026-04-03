@@ -1,18 +1,21 @@
 package com.brandex.datastructures;
 
+import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.brandex.models.Model;
-
-public class LinkedList<T extends Model> {
+public class LinkedList<T> {
     private Node<T> head = null; // starting point of list
     private Node<T> tail = null; // points the last element in the list
+    private Comparator<T> comparator;
 
-    public LinkedList() {}
+    public LinkedList(Comparator<T> comparator) {
+        this.comparator = comparator;
+    }
 
     public void insert(T data) {
-        if (data == null) return;
+        if (data == null)
+            return;
         Node<T> newNode = new Node<>(data);
         if (this.head == null) {
             this.head = newNode;
@@ -24,11 +27,13 @@ public class LinkedList<T extends Model> {
         }
     }
 
-    public void delete(T data) {
-        if (this.head == null || data == null) return;
+    public void remove(T data) {
+        if (this.head == null || data == null)
+            return;
         Node<T> current = this.head;
         while (current != null) {
-            if (current.getData().getId() != null && current.getData().getId().equals(data.getId())) {
+            int cmp = comparator.compare(data, current.getData());
+            if (cmp == 0) {
                 if (current == this.head && current == this.tail) {
                     this.head = null;
                     this.tail = null;
@@ -49,7 +54,8 @@ public class LinkedList<T extends Model> {
     }
 
     public T search(String key, Function<T, String> keyExtractor) {
-        if (key == null) return null;
+        if (key == null)
+            return null;
         Node<T> current = this.head;
         while (current != null) {
             if (key.equalsIgnoreCase(keyExtractor.apply(current.getData()))) {
@@ -66,5 +72,26 @@ public class LinkedList<T extends Model> {
             action.accept(current.getData());
             current = current.getRight();
         }
+    }
+
+    public T removeTail() {
+        if (this.tail == null)
+            return null;
+        T Data = this.tail.getData();
+        this.tail = this.tail.getLeft();
+        if (this.tail == null) {
+            this.head = null;
+        } else {
+            this.tail.setRight(null);
+        }
+        return Data;
+    }
+
+    public Node<T> getTail() {
+        return this.tail;
+    }
+
+    public Node<T> getHead() {
+        return this.head;
     }
 }

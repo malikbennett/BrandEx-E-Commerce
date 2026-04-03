@@ -38,7 +38,8 @@ public class ProductService {
         if (keyword.isEmpty())
             keyword = this.searchQuery;
 
-        LinkedList<Product> results = new LinkedList<>();
+        LinkedList<Product> results = new LinkedList<>(
+                (a, b) -> a.getId().compareTo(b.getId()));
         String lowerKeyword = keyword.toLowerCase();
 
         this.productTree.traverse(p -> {
@@ -48,6 +49,16 @@ public class ProductService {
         });
 
         return results;
+    }
+
+    public Product searchById(String id) {
+        final Product[] found = new Product[1];
+        this.productTree.traverse(p -> {
+            if (p.getId().equals(id)) {
+                found[0] = p;
+            }
+        });
+        return found[0];
     }
 
     public String getSearchQuery() {
