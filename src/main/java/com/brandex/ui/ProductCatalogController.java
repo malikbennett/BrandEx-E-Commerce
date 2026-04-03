@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.brandex.models.Product;
+import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 import com.brandex.utilities.ImageLoader;
 
@@ -22,7 +23,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class ProductCatalogController {
@@ -74,10 +74,6 @@ public class ProductCatalogController {
         imageContainer.setMinHeight(180);
         imageContainer.setMaxHeight(180);
         imageContainer.setStyle("-fx-background-color: #f5f5f5;" + "-fx-background-radius: 8 8 8 8;");
-        // Rectangle clip = new Rectangle(250, 180);
-        // clip.setArcWidth(8);
-        // clip.setArcHeight(8);
-        // imageContainer.setClip(clip);
         StackPane.setAlignment(imgView, Pos.CENTER);
         card.setHeader(imageContainer); // sets the image as the header of the card
         // title and category for subheader
@@ -96,7 +92,7 @@ public class ProductCatalogController {
         Tile footer = new Tile(String.format("$%.2f", product.getPrice()), null);
         Button addToCart = new Button("Add");
         addToCart.setOnAction(e -> {
-            // Handle add to cart action
+            CartService.getInstance().addItem(product.getId(), 1);
         });
         footer.setAction(addToCart);
         card.setFooter(footer); // sets the price and add to cart button as the footer of the card

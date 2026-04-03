@@ -2,15 +2,17 @@ package com.brandex.ui;
 
 import com.brandex.models.User;
 import com.brandex.service.AuthService;
+import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
+import atlantafx.base.controls.ModalPane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.control.TextField;
 
 public class DashboardController {
 
@@ -22,13 +24,15 @@ public class DashboardController {
     private HBox adminControls;
     @FXML
     private TextField searchField;
+    @FXML
+    private ModalPane modalPane;
 
     User user = AuthService.getInstance().getCurrentUser();
 
     // Shared views
     @FXML
     private void showProducts() {
-        loadView("shared/ProductCatalog");
+        loadView("store/ProductCatalog");
     }
 
     @FXML
@@ -37,20 +41,26 @@ public class DashboardController {
         handleSearch();
     }
 
-    // Customer views
     @FXML
     private void showCart() {
-        loadView("customer/Cart");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/brandex/fxml/store/Cart.fxml"));
+            Node cartView = loader.load();
+            CartController controller = loader.getController();
+            controller.setModalPane(this.modalPane, cartView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void showOrders() {
-        loadView("customer/OrderHistory");
+        loadView("store/OrderHistory");
     }
 
     @FXML
     private void showProfile() {
-        loadView("customer/Profile");
+        loadView("store/Profile");
     }
 
     // Admin views
@@ -109,8 +119,9 @@ public class DashboardController {
             adminControls.setManaged(false);
 
         }
-        // loads the product catalog view
+        // loads the products and cart
         ProductService.getInstance().loadProducts();
+        CartService.getInstance().loadCart();
         showProducts();
     }
 }

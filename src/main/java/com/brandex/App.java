@@ -2,12 +2,12 @@ package com.brandex;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import atlantafx.base.theme.CupertinoDark;
-import atlantafx.base.theme.CupertinoLight;
+// import atlantafx.base.theme.CupertinoLight;
 
 import java.io.IOException;
 
@@ -17,6 +17,7 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static StackPane root;
 
     // This is the main entry point for our JavaFX application. It loads the main
     // FXML file and sets up the stage.
@@ -24,26 +25,38 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
-        // Calls the setRoot method to load the main.fxml file and get the root node
-        Parent root = setRoot("main");
-        scene = new Scene(root);
-        stage.setScene(scene);
         stage.setMaximized(true);
         stage.setMinWidth(640);
         stage.setMinHeight(360);
         stage.setTitle("BrandEx Online Store");
+        scene = setScene();
+        stage.setScene(scene);
         stage.show();
+    }
+
+    public static Scene setScene() {
+        root = setRoot("main");
+        return new Scene(root);
+    }
+
+    public static StackPane getRoot() {
+        return root;
     }
 
     // This loads in our FXML files and updates the scene root to navigate between
     // screens
-    public static Parent setRoot(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/brandex/fxml/" + fxml + ".fxml"));
-        Parent root = fxmlLoader.load();
-        if (scene != null) {
-            scene.setRoot(root); // Update the live scene to show the new screen
+    public static StackPane setRoot(String fxml) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/brandex/fxml/" + fxml + ".fxml"));
+            root = fxmlLoader.load();
+            if (scene != null)
+                scene.setRoot(root); // Update the live scene to show the new screen
+            return root;
+        } catch (IOException e) {
+            System.err.println("Error loading FXML: " + fxml + ".fxml");
+            e.printStackTrace();
         }
-        return root;
+        return null;
     }
 
     // Our main method just launches the JavaFX application

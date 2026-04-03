@@ -59,7 +59,7 @@ public class AuthController {
             if (user.isForcePwChange()) {
                 App.setRoot("auth/ChangePassword");
             } else {
-                App.setRoot("shared/Dashboard");
+                App.setRoot("store/Dashboard");
             }
 
         } catch (Exception e) {
@@ -136,5 +136,11 @@ public class AuthController {
         } catch (Exception e) {
             ThrowError.errorLabel(changePasswordErrorLabel, e.getMessage());
         }
+    }
+
+    @FXML
+    private void initialize() {
+        loginEmailField.setText("");
+        loginPasswordField.setText("");
     }
 }

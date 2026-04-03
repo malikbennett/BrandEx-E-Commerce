@@ -2,6 +2,7 @@ package com.brandex.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 
 import com.brandex.database.JDBC;
 import com.brandex.datastructures.LinkedList;
@@ -17,7 +18,7 @@ public class ProductRepository {
     }
 
     public LinkedList<Product> listProducts() {
-        LinkedList<Product> products = new LinkedList<>();
+        LinkedList<Product> products = new LinkedList<>((a, b) -> 0);
         String sql = "SELECT * FROM products";
         try {
             ResultSet rs = JDBC.query(sql);
@@ -32,6 +33,7 @@ public class ProductRepository {
                 product.setPrice(rs.getDouble("price"));
                 product.setRating(rs.getDouble("rating"));
                 product.setStock(rs.getInt("stock"));
+                product.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
 
                 products.insert(product);
             }
