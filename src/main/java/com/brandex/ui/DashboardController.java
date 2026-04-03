@@ -29,7 +29,7 @@ public class DashboardController {
     // Shared views
     @FXML
     private void showProducts() {
-        loadView("shared/ProductCatalog");
+        loadView("store/ProductCatalog");
     }
 
     @FXML
@@ -41,17 +41,17 @@ public class DashboardController {
     // Customer views
     @FXML
     private void showCart() {
-        loadView("customer/Cart");
+        loadView("store/Cart");
     }
 
     @FXML
     private void showOrders() {
-        loadView("customer/OrderHistory");
+        loadView("store/OrderHistory");
     }
 
     @FXML
     private void showProfile() {
-        loadView("customer/Profile");
+        loadView("store/Profile");
     }
 
     // Admin views
