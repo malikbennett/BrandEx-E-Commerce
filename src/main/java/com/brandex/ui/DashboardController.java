@@ -2,6 +2,7 @@ package com.brandex.ui;
 
 import com.brandex.models.User;
 import com.brandex.service.AuthService;
+import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
 import javafx.fxml.FXML;
@@ -109,8 +110,9 @@ public class DashboardController {
             adminControls.setManaged(false);
 
         }
-        // loads the product catalog view
+        // loads the products and cart
         ProductService.getInstance().loadProducts();
+        CartService.getInstance().loadCart();
         showProducts();
     }
 }

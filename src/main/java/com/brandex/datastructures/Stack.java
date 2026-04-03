@@ -3,7 +3,7 @@ package com.brandex.datastructures;
 public class Stack<T> {
     private LinkedList<T> list = new LinkedList<>((a, b) -> 0);
 
-    Stack() {
+    public Stack() {
     }
 
     public void push(T data) {

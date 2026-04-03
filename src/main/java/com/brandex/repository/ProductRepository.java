@@ -18,7 +18,7 @@ public class ProductRepository {
     }
 
     public LinkedList<Product> listProducts() {
-        LinkedList<Product> products = new LinkedList<>();
+        LinkedList<Product> products = new LinkedList<>((a, b) -> 0);
         String sql = "SELECT * FROM products";
         try {
             ResultSet rs = JDBC.query(sql);

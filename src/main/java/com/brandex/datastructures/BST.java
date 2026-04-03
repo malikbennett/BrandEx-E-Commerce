@@ -48,15 +48,15 @@ public class BST<T> {
         }
     }
 
-    private Node<T> deleteRecursive(Node<T> node, T data) {
+    private Node<T> removeRecursive(Node<T> node, T data) {
         if (node == null || data == null)
             return node; // same logic, the previous node was a leaf node so we can just remove its
                          // parent, i.e setting the parent pointer to null
         int cmp = comparator.compare(data, node.getData()); // same logic
         if (cmp < 0) { // same logic
-            node.setLeft(deleteRecursive(node.getLeft(), data));
+            node.setLeft(removeRecursive(node.getLeft(), data));
         } else if (cmp > 0) {
-            node.setRight(deleteRecursive(node.getRight(), data));
+            node.setRight(removeRecursive(node.getRight(), data));
         } else { // we found the match
             // if the node that needs to be deleted has a child, one, then we simply replace
             // it with its child
@@ -79,7 +79,7 @@ public class BST<T> {
             // replaces its value
             node.setData(successor.getData());
             // Now we want to remove the successor from the right side
-            node.setRight(deleteRecursive(node.getRight(), successor.getData()));
+            node.setRight(removeRecursive(node.getRight(), successor.getData()));
         }
         return node;
     }
@@ -147,8 +147,8 @@ public class BST<T> {
         return searchRecursive(this.root, key, keyExtractor);
     }
 
-    public void delete(T data) {
-        this.root = deleteRecursive(this.root, data);
+    public void remove(T data) {
+        this.root = removeRecursive(this.root, data);
     }
 
     // in order traversal
