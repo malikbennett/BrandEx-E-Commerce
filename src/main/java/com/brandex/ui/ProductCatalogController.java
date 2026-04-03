@@ -73,10 +73,6 @@ public class ProductCatalogController {
         imageContainer.setMinHeight(180);
         imageContainer.setMaxHeight(180);
         imageContainer.setStyle("-fx-background-color: #f5f5f5;" + "-fx-background-radius: 8 8 8 8;");
-        // Rectangle clip = new Rectangle(250, 180);
-        // clip.setArcWidth(8);
-        // clip.setArcHeight(8);
-        // imageContainer.setClip(clip);
         StackPane.setAlignment(imgView, Pos.CENTER);
         card.setHeader(imageContainer); // sets the image as the header of the card
         // title and category for subheader

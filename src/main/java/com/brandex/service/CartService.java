@@ -12,8 +12,8 @@ import com.brandex.repository.CartRepository;
 public class CartService {
     private static CartService instance;
     private Cart currentCart;
+    private final LinkedList<CartItem> cart = new LinkedList<>((a, b) -> a.getProductId().compareTo(b.getProductId()));
     private final CartRepository cartRepo = CartRepository.getInstance();
-    private LinkedList<CartItem> cart = new LinkedList<>((a, b) -> a.getProductId().compareTo(b.getProductId()));
     private final Stack<Command> undoStack = new Stack<>();
     private final Stack<Command> redoStack = new Stack<>();
 
@@ -31,12 +31,14 @@ public class CartService {
         return this.cart;
     }
 
+    // Create a cart for user on load
     public void createCart() {
         Cart cart = new Cart();
         cart.setUserId(AuthService.getInstance().getCurrentUser().getId());
         cartRepo.createCart(cart);
     }
 
+    // Load the users cart from database
     public void loadCart() {
         this.currentCart = cartRepo.getCart("user_id", AuthService.getInstance().getCurrentUser().getId());
         if (this.currentCart == null)
@@ -46,6 +48,7 @@ public class CartService {
         });
     }
 
+    // Add item to cart
     public void addItem(String productId, int qty) {
         Command cmd = new CartAddCommand(this.cart, productId, qty);
         cmd.execute();
@@ -53,6 +56,7 @@ public class CartService {
         redoStack.clear();
     }
 
+    // Remove item from cart
     public void removeItem(String productId, int qty) {
         Command cmd = new CartRemoveCommand(this.cart, productId, qty);
         cmd.execute();
@@ -62,6 +66,7 @@ public class CartService {
 
     public void undo() {
         if (!undoStack.isEmpty()) {
+            System.out.println("Undo cart action");
             Command cmd = undoStack.pop();
             cmd.undo();
             redoStack.push(cmd);
@@ -70,6 +75,7 @@ public class CartService {
 
     public void redo() {
         if (!redoStack.isEmpty()) {
+            System.out.println("Redo cart action");
             Command cmd = redoStack.pop();
             cmd.execute();
             undoStack.push(cmd);

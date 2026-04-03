@@ -51,6 +51,16 @@ public class ProductService {
         return results;
     }
 
+    public Product searchById(String id) {
+        final Product[] found = new Product[1];
+        this.productTree.traverse(p -> {
+            if (p.getId().equals(id)) {
+                found[0] = p;
+            }
+        });
+        return found[0];
+    }
+
     public String getSearchQuery() {
         return this.searchQuery;
     }

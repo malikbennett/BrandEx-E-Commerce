@@ -54,7 +54,7 @@ public class CartRepository {
 
     public LinkedList<CartItem> listCartItems(String cartId) {
         LinkedList<CartItem> items = new LinkedList<>((a, b) -> 0);
-        String sql = "SELECT * FROM cart_items WHERE cart_id = ?::uuid";
+        String sql = "SELECT * FROM cart_item WHERE cart_id = ?::uuid";
         try {
             ResultSet rs = JDBC.query(sql, cartId);
             while (rs.next()) {
@@ -97,7 +97,7 @@ public class CartRepository {
     }
 
     public void createCartItem(String cartId, String productId, int quantity) {
-        String sql = "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?::uuid, ?::uuid, ?)";
+        String sql = "INSERT INTO cart_item (cart_id, product_id, quantity) VALUES (?::uuid, ?::uuid, ?)";
         try {
             JDBC.execute(sql, cartId, productId, quantity);
         } catch (Exception e) {
@@ -107,7 +107,7 @@ public class CartRepository {
     }
 
     public void updateCartItem(String cartItemId, String condition, String value) {
-        String sql = "UPDATE cart_items SET " + condition + " = ? WHERE id = ?::uuid";
+        String sql = "UPDATE cart_item SET " + condition + " = ? WHERE id = ?::uuid";
         try {
             JDBC.execute(sql, value, cartItemId);
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class CartRepository {
     }
 
     public void deleteCartItem(String cartItemId) {
-        String sql = "DELETE FROM cart_items WHERE id = ?::uuid";
+        String sql = "DELETE FROM cart_item WHERE id = ?::uuid";
         try {
             JDBC.execute(sql, cartItemId);
         } catch (Exception e) {

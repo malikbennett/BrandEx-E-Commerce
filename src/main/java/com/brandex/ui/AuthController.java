@@ -137,4 +137,10 @@ public class AuthController {
             ThrowError.errorLabel(changePasswordErrorLabel, e.getMessage());
         }
     }
+
+    @FXML
+    private void initialize() {
+        loginEmailField.setText("bennettmalik213@gmail.com");
+        loginPasswordField.setText("password");
+    }
 }

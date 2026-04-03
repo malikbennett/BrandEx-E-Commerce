@@ -5,13 +5,16 @@ import com.brandex.service.AuthService;
 import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
+import atlantafx.base.controls.ModalPane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.control.TextField;
 
 public class DashboardController {
 
@@ -23,6 +26,8 @@ public class DashboardController {
     private HBox adminControls;
     @FXML
     private TextField searchField;
+    @FXML
+    private ModalPane modalPane;
 
     User user = AuthService.getInstance().getCurrentUser();
 
@@ -38,10 +43,16 @@ public class DashboardController {
         handleSearch();
     }
 
-    // Customer views
     @FXML
     private void showCart() {
-        loadView("store/Cart");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/brandex/fxml/store/Cart.fxml"));
+            Node cartView = loader.load();
+            CartController controller = loader.getController();
+            controller.setModalPane(this.modalPane, cartView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
