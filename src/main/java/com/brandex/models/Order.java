@@ -1,11 +1,14 @@
 package com.brandex.models;
 
+import com.brandex.models.enums.OrderStatus;
+import com.brandex.models.enums.PaymentMethod;
+
 public class Order extends Model {
     private String userId;
     private String orderNumber;
-    private String status;
+    private OrderStatus status;
     private String shippingAddress;
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
     private double total;
 
     public Order() {
@@ -19,7 +22,7 @@ public class Order extends Model {
         return this.orderNumber;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return this.status;
     }
 
@@ -27,7 +30,7 @@ public class Order extends Model {
         return this.shippingAddress;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return this.paymentMethod;
     }
 
@@ -43,7 +46,7 @@ public class Order extends Model {
         this.orderNumber = orderNumber;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
@@ -51,7 +54,7 @@ public class Order extends Model {
         this.shippingAddress = shippingAddress;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
