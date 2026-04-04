@@ -17,30 +17,111 @@ public class ProductRepository {
         return instance;
     }
 
+    // ── READ ──────────────────────────────────────────────────────────────────
+
     public LinkedList<Product> listProducts() {
         LinkedList<Product> products = new LinkedList<>((a, b) -> 0);
-        String sql = "SELECT * FROM products";
+        String sql = "SELECT * FROM products ORDER BY name ASC";
         try {
             ResultSet rs = JDBC.query(sql);
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getString("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setCategory(rs.getString("category"));
-                product.setBrand(rs.getString("brand"));
-                product.setImageUrl(rs.getString("image_url"));
-                product.setPrice(rs.getDouble("price"));
-                product.setRating(rs.getDouble("rating"));
-                product.setStock(rs.getInt("stock"));
-                product.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
-
-                products.insert(product);
+                products.insert(mapRow(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Database Error: Failed to fetch products. " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("DB Error - listProducts: " + e.getMessage());
         }
         return products;
+    }
+
+    // ── CREATE ────────────────────────────────────────────────────────────────
+
+    /**
+     * Inserts a new product and returns the DB-generated UUID string,
+     * or null on failure.
+     *
+     * Assumes the DB column is:  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+     * We use RETURNING id to get the value immediately.
+     */
+    public String insertProduct(Product p) {
+        String sql = "INSERT INTO products (name, description, category, brand, image_url, price, rating, stock) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        try {
+            ResultSet rs = JDBC.query(sql,
+                    p.getName(),
+                    p.getDescription(),
+                    p.getCategory(),
+                    p.getBrand(),
+                    p.getImageUrl(),
+                    p.getPrice(),
+                    p.getRating(),
+                    p.getStock());
+            if (rs.next()) return rs.getString("id");
+        } catch (SQLException e) {
+            System.err.println("DB Error - insertProduct: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // ── UPDATE ────────────────────────────────────────────────────────────────
+
+    /**
+     * Updates every mutable field for the given product id.
+     * Returns true if the execute succeeded without throwing.
+     */
+    public boolean updateProduct(Product p) {
+        String sql = "UPDATE products "
+                   + "SET name=?, description=?, category=?, brand=?, image_url=?, price=?, rating=?, stock=? "
+                   + "WHERE id=?";
+        try {
+            JDBC.execute(sql,
+                    p.getName(),
+                    p.getDescription(),
+                    p.getCategory(),
+                    p.getBrand(),
+                    p.getImageUrl(),
+                    p.getPrice(),
+                    p.getRating(),
+                    p.getStock(),
+                    p.getId());
+            return true;
+        } catch (SQLException e) {
+            System.err.println("DB Error - updateProduct: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ── DELETE ────────────────────────────────────────────────────────────────
+
+    /**
+     * Deletes orphaned cart_items first (avoids FK violation), then deletes
+     * the product row itself.
+     * Returns true if both executes succeeded without throwing.
+     */
+    public boolean deleteProduct(String productId) {
+        try {
+            JDBC.execute("DELETE FROM cart_items WHERE product_id = ?", productId);
+            JDBC.execute("DELETE FROM products   WHERE id = ?",         productId);
+            return true;
+        } catch (SQLException e) {
+            System.err.println("DB Error - deleteProduct: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ── HELPER ────────────────────────────────────────────────────────────────
+
+    private Product mapRow(ResultSet rs) throws SQLException {
+        Product p = new Product();
+        p.setId(rs.getString("id"));
+        p.setName(rs.getString("name"));
+        p.setDescription(rs.getString("description"));
+        p.setCategory(rs.getString("category"));
+        p.setBrand(rs.getString("brand"));
+        p.setImageUrl(rs.getString("image_url"));
+        p.setPrice(rs.getDouble("price"));
+        p.setRating(rs.getDouble("rating"));
+        p.setStock(rs.getInt("stock"));
+        p.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
+        return p;
     }
 }
