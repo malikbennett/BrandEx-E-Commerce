@@ -1,7 +1,10 @@
 package com.brandex.repository;
 
 import com.brandex.models.User;
+import com.brandex.models.enums.UserStatus;
 import com.brandex.database.JDBC;
+import com.brandex.datastructures.LinkedList;
+
 import java.sql.*;
 import java.time.OffsetDateTime;
 
@@ -14,6 +17,40 @@ public class UserRepository {
         if (instance == null)
             instance = new UserRepository();
         return instance;
+    }
+
+    public LinkedList<User> listUsers() {
+        LinkedList<User> users = new LinkedList<>((a, b) -> 0);
+        String sql = "SELECT * FROM users";
+        try {
+            ResultSet rs = JDBC.query(sql);
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setPhoneNumber(rs.getString("phone_number"));
+                user.setShippingAddress(rs.getString("shipping_address"));
+                user.setStatus(UserStatus.valueOf(rs.getString("status").toUpperCase()));
+                user.setRole(rs.getString("role"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setPrevHash1(rs.getString("prev_hash_1"));
+                user.setPrevHash2(rs.getString("prev_hash_2"));
+                user.setOtpHash(rs.getString("otp_hash"));
+                user.setOtpUsed(rs.getBoolean("otp_used"));
+                user.setForcePwChange(rs.getBoolean("force_pw_change"));
+                user.setProfileImgURL(rs.getString("profile_image_url"));
+                user.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
+
+                users.insert(user);
+            }
+        } catch (Exception e) {
+            System.err.println("Database Error: Failed to list users. " + e.getMessage());
+            e.printStackTrace();
+        }
+        return users;
     }
 
     public User getUser(String condition, String value) {
@@ -30,6 +67,7 @@ public class UserRepository {
                 user.setLastName(rs.getString("last_name"));
                 user.setPhoneNumber(rs.getString("phone_number"));
                 user.setShippingAddress(rs.getString("shipping_address"));
+                user.setStatus(UserStatus.valueOf(rs.getString("status").toUpperCase()));
                 user.setRole(rs.getString("role"));
                 user.setPasswordHash(rs.getString("password_hash"));
                 user.setPrevHash1(rs.getString("prev_hash_1"));

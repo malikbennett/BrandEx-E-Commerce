@@ -1,7 +1,10 @@
 package com.brandex.models;
 
+import com.brandex.models.enums.UserStatus;
+
 public class User extends Model {
     private String username, email, firstName, lastName, role, phoneNumber, shippingAddress, profileImgURL;
+    private UserStatus status;
     private String passwordHash, prevHash1, prevHash2;
     private String otpHash;
     private boolean otpUsed, forcePwChange;
@@ -23,6 +26,14 @@ public class User extends Model {
 
     public String getLastName() {
         return this.lastName;
+    }
+
+    public UserStatus getStatus() {
+        return this.status;
+    }
+
+    public String getRole() {
+        return this.role;
     }
 
     public String getPhoneNumber() {
@@ -47,10 +58,6 @@ public class User extends Model {
 
     public String getPrevHash2() {
         return this.prevHash2;
-    }
-
-    public String getRole() {
-        return this.role;
     }
 
     public String getOtpHash() {
@@ -81,6 +88,14 @@ public class User extends Model {
         this.lastName = lastName;
     }
 
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -103,10 +118,6 @@ public class User extends Model {
 
     public void setPrevHash2(String hash) {
         this.prevHash2 = hash;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public void setOtpHash(String otpHash) {
