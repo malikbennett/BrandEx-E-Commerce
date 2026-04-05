@@ -49,6 +49,8 @@ public class ProductCatalogController {
     @FXML
     private VBox brandCheckboxBox;
 
+    private final ProductService productService = ProductService.getInstance();
+
     @FXML
     public void initialize() {
         loadProducts();
@@ -100,9 +102,10 @@ public class ProductCatalogController {
     }
 
     private void loadProducts() {
-
+        if (productService.getProductTree().isEmpty()) {
+            productService.loadProducts();
+        }
         productGrid.getChildren().clear();
-        ProductService productService = ProductService.getInstance();
 
         try {
             productService.searchByKeyword("").traverse(product -> {

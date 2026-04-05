@@ -146,7 +146,7 @@ public class BST<T> {
     public T search(String key, Function<T, String> keyExtractor) {
         return searchRecursive(this.root, key, keyExtractor);
     }
-    
+
     public void remove(T data) {
         this.root = removeRecursive(this.root, data);
     }
@@ -173,5 +173,9 @@ public class BST<T> {
 
     public void traverse(Consumer<T> action) {
         inOrder(action);
+    }
+
+    public boolean isEmpty() {
+        return root == null;
     }
 }

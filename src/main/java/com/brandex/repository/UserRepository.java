@@ -122,4 +122,24 @@ public class UserRepository {
             e.printStackTrace();
         }
     }
+
+    public void updateUserStatusAndRole(String username, UserStatus status, String role) {
+        String sql = "UPDATE users SET status = ?, role = ? WHERE username = ?";
+        try {
+            JDBC.execute(sql, status.name(), role, username);
+        } catch (Exception e) {
+            System.err.println("Database Error: Failed to update user status and role. " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void resetPassword(String username, String tempPwHash) {
+        String sql = "UPDATE users SET password_hash = ?, force_pw_change = true WHERE username = ?";
+        try {
+            JDBC.execute(sql, tempPwHash, username);
+        } catch (Exception e) {
+            System.err.println("Database Error: Failed to reset user password. " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

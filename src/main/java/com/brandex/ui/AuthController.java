@@ -89,11 +89,7 @@ public class AuthController {
         }
         try {
             // Call the register method and get the generated OTP
-            String otp = authService.register(firstName, lastName, email, username);
-            // Send the OTP to the user's email
-            EmailSender.send(authService.getCurrentUser().getEmail(),
-                    "Your BrandEx OTP",
-                    "Your one-time password is: " + otp + "\n\nDo not share this with anyone.");
+            authService.register(firstName, lastName, email, username);
             // Navigate to OTP verification screen
             App.setRoot("auth/OTPVerify");
         } catch (Exception e) {
@@ -132,7 +128,7 @@ public class AuthController {
                 throw new Exception("New password and confirmation do not match.");
             }
             authService.changePassword(username, currentPassword, newPassword);
-            App.setRoot("shared/Dashboard");
+            App.setRoot("store/Dashboard");
         } catch (Exception e) {
             ThrowError.errorLabel(changePasswordErrorLabel, e.getMessage());
         }
@@ -140,7 +136,9 @@ public class AuthController {
 
     @FXML
     private void initialize() {
-        loginEmailField.setText("");
-        loginPasswordField.setText("");
+        if (loginEmailField != null)
+            loginEmailField.setText("");
+        if (loginPasswordField != null)
+            loginPasswordField.setText("");
     }
 }

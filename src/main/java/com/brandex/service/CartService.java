@@ -28,6 +28,8 @@ public class CartService {
     }
 
     public LinkedList<CartItem> getCartItems() {
+        if (this.cart.isEmpty()) {
+        }
         return this.cart;
     }
 
@@ -46,6 +48,13 @@ public class CartService {
         this.cartRepo.listCartItems(this.currentCart.getId()).traverse(cartItem -> {
             this.cart.insert(cartItem);
         });
+    }
+
+    public void clearCart() {
+        this.currentCart = null;
+        this.cart.clear();
+        this.undoStack.clear();
+        this.redoStack.clear();
     }
 
     // Add item to cart

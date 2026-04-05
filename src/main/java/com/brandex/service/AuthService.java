@@ -2,6 +2,7 @@ package com.brandex.service;
 
 import com.brandex.models.User;
 import com.brandex.repository.UserRepository;
+import com.brandex.utilities.EmailSender;
 import com.brandex.utilities.OTPGenerator;
 import com.brandex.utilities.PasswordHasher;
 
@@ -38,7 +39,7 @@ public class AuthService {
     }
 
     // Returns the OTP so you can email it
-    public String register(String firstName, String lastName, String email, String username) {
+    public void register(String firstName, String lastName, String email, String username) throws Exception {
 
         if (userRepo.getUser("email", email) != null || userRepo.getUser("username", username) != null)
             throw new IllegalArgumentException("An account with this email or username already exists.");
@@ -58,9 +59,21 @@ public class AuthService {
         user.setRole("customer");
 
         userRepo.createUser(user);
-        currentUser = user;
+        currentUser = userRepo.getUser("username", user.getUsername());
         CartService.getInstance().createCart();
-        return otp;
+
+        // Send the OTP to the user's email
+        String subject = "Welcome to BrandEx!";
+        String body = String.format("""
+                Hello %s,
+
+                Welcome to BrandEx!
+                Your one-time password is: %s
+
+                Regards,
+                The BrandEx Team
+                """, user.getFirstName(), otp);
+        EmailSender.send(user.getEmail(), subject, body);
     }
 
     // Verifies the OTP and marks it as used if valid
@@ -99,5 +112,6 @@ public class AuthService {
 
     public void logout() {
         currentUser = null;
+        CartService.getInstance().clearCart();
     }
 }
