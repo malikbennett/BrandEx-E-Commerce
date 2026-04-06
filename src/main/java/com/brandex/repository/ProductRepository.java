@@ -17,8 +17,6 @@ public class ProductRepository {
         return instance;
     }
 
-    // ── READ ──────────────────────────────────────────────────────────────────
-
     public LinkedList<Product> listProducts() {
         LinkedList<Product> products = new LinkedList<>((a, b) -> 0);
         String sql = "SELECT * FROM products";
@@ -33,15 +31,19 @@ public class ProductRepository {
         return products;
     }
 
-    // ── CREATE ────────────────────────────────────────────────────────────────
+    public Product findById(String id) {
+        String sql = "SELECT * FROM products WHERE id = ?::uuid";
+        try {
+            ResultSet rs = JDBC.query(sql, id);
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("DB Error - findById: " + e.getMessage());
+        }
+        return null;
+    }
 
-    /**
-     * Inserts a new product and returns the DB-generated UUID string,
-     * or null on failure.
-     *
-     * Assumes the DB column is: id UUID PRIMARY KEY DEFAULT gen_random_uuid()
-     * We use RETURNING id to get the value immediately.
-     */
     public String createProduct(Product product) {
         String sql = "INSERT INTO products (name, description, category, brand, image_url, price, rating, stock) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
@@ -63,16 +65,10 @@ public class ProductRepository {
         return null;
     }
 
-    // ── UPDATE ────────────────────────────────────────────────────────────────
-
-    /**
-     * Updates every mutable field for the given product id.
-     * Returns true if the execute succeeded without throwing.
-     */
     public boolean updateProduct(Product p) {
         String sql = "UPDATE products "
                 + "SET name=?, description=?, category=?, brand=?, image_url=?, price=?, rating=?, stock=? "
-                + "WHERE id=?";
+                + "WHERE id=?::uuid";
         try {
             JDBC.execute(sql,
                     p.getName(),
@@ -91,25 +87,16 @@ public class ProductRepository {
         }
     }
 
-    // ── DELETE ────────────────────────────────────────────────────────────────
-
-    /**
-     * Deletes orphaned cart_items first (avoids FK violation), then deletes
-     * the product row itself.
-     * Returns true if both executes succeeded without throwing.
-     */
     public boolean deleteProduct(String productId) {
         try {
-            JDBC.execute("DELETE FROM cart_items WHERE product_id = ?", productId);
-            JDBC.execute("DELETE FROM products   WHERE id = ?", productId);
+            JDBC.execute("DELETE FROM cart_item WHERE product_id = ?::uuid", productId);
+            JDBC.execute("DELETE FROM products  WHERE id = ?::uuid", productId);
             return true;
         } catch (SQLException e) {
             System.err.println("DB Error - deleteProduct: " + e.getMessage());
             return false;
         }
     }
-
-    // ── HELPER ────────────────────────────────────────────────────────────────
 
     private Product mapRow(ResultSet rs) throws SQLException {
         Product p = new Product();

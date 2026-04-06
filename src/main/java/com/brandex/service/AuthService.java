@@ -29,7 +29,7 @@ public class AuthService {
     // Returns the logged-in user, or throws with a readable message
     public User login(String email, String password) {
 
-        User user = userRepo.getUser("email", email);
+        User user = userRepo.findByEmail(email);
 
         if (user == null || !PasswordHasher.matches(password, user.getPasswordHash()))
             throw new IllegalArgumentException("Invalid email or password.");
@@ -41,7 +41,7 @@ public class AuthService {
     // Returns the OTP so you can email it
     public void register(String firstName, String lastName, String email, String username) throws Exception {
 
-        if (userRepo.getUser("email", email) != null || userRepo.getUser("username", username) != null)
+        if (userRepo.findByEmail(email) != null || userRepo.findByUsername(username) != null)
             throw new IllegalArgumentException("An account with this email or username already exists.");
 
         String otp = OTPGenerator.generate();
@@ -58,8 +58,13 @@ public class AuthService {
         user.setForcePwChange(true);
         user.setRole("customer");
 
-        userRepo.createUser(user);
-        currentUser = userRepo.getUser("username", user.getUsername());
+        String userId = userRepo.createUser(user);
+        if (userId == null) {
+            throw new Exception("Failed to register user.");
+        }
+        user.setId(userId);
+        currentUser = user; 
+        
         CartService.getInstance().createCart();
 
         // Send the OTP to the user's email
@@ -79,7 +84,7 @@ public class AuthService {
     // Verifies the OTP and marks it as used if valid
     public void verifyOtp(String username, String enteredOtp) {
 
-        User user = userRepo.getUser("username", username);
+        User user = userRepo.findByUsername(username);
 
         if (user == null || !PasswordHasher.matches(enteredOtp, user.getOtpHash()))
             throw new IllegalArgumentException("Invalid OTP.");
@@ -87,13 +92,16 @@ public class AuthService {
         if (user.isOtpUsed())
             throw new IllegalArgumentException("OTP has already been used.");
 
-        userRepo.updateOtpUsed(username);
+        userRepo.updateOtpUsed(user.getId());
     }
 
     // Changes the user's password
     public void changePassword(String username, String oldPassword, String newPassword) {
 
-        User user = userRepo.getUser("username", username);
+        User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
 
         if (!PasswordHasher.matches(oldPassword, user.getPasswordHash()))
             throw new IllegalArgumentException("Current password is incorrect.");
@@ -104,9 +112,9 @@ public class AuthService {
                 || newHash.equals(user.getPrevHash2()))
             throw new IllegalArgumentException("New password cannot match your last two passwords.");
 
-        userRepo.updatePassword(username, newHash, user.getPasswordHash(), user.getPrevHash1());
+        userRepo.updatePassword(user.getId(), newHash, user.getPasswordHash(), user.getPrevHash1());
 
-        if (currentUser != null && currentUser.getUsername().equals(username))
+        if (currentUser != null && currentUser.getId().equals(user.getId()))
             currentUser.setPasswordHash(newHash);
     }
 

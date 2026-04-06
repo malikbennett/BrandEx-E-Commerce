@@ -16,20 +16,29 @@ public class UserService {
     private final BST<User> userTree = new BST<>((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
 
     public static UserService getInstance() {
-        if (instance == null) {
+        if (instance == null)
             instance = new UserService();
-        }
         return instance;
     }
 
     public void loadUsers() {
         this.userRepo.listUsers().traverse(user -> {
-            this.userTree.insert(user);
+            this.setInternalUser(user);
         });
     }
 
     public void forEachUser(Consumer<User> action) {
         this.userTree.traverse(action);
+    }
+
+    public User searchById(String id) {
+        final User[] found = new User[1];
+        this.userTree.traverse(user -> {
+            if (user.getId().equals(id)) {
+                found[0] = user;
+            }
+        });
+        return found[0];
     }
 
     public User searchByUsername(String username) {
@@ -42,21 +51,41 @@ public class UserService {
         return found[0];
     }
 
-    public BST<User> getUsersTree() {
-        return this.userTree;
+    public void createUser(User user) throws Exception {
+        if (user == null)
+            throw new Exception("User cannot be null.");
+        String generatedId = this.userRepo.createUser(user);
+        if (generatedId == null)
+            throw new Exception("Failed to save user to database.");
+        user.setId(generatedId);
+        this.userTree.insert(user);
     }
 
-    public void updateUser(User user, UserStatus status, String role) {
-        userRepo.updateUserStatusAndRole(user.getUsername(), status, role);
+    public void updateUser(User user, UserStatus status, String role) throws Exception {
+        boolean ok = userRepo.updateUserStatusAndRole(user.getId(), status, role);
+        if (!ok)
+            throw new Exception("Failed to update user in database.");
         user.setStatus(status);
         user.setRole(role);
+    }
+
+    public void deleteUser(User user) throws Exception {
+        if (user == null)
+            throw new Exception("User cannot be null.");
+        boolean ok = userRepo.deleteUser(user.getId());
+        if (!ok)
+            throw new Exception("Failed to delete user from database.");
+        this.userTree.remove(user);
     }
 
     public void resetPassword(User user) throws Exception {
         String tempPassword = OTPGenerator.generate();
         String hash = PasswordHasher.hash(tempPassword);
 
-        userRepo.resetPassword(user.getUsername(), hash);
+        boolean ok = userRepo.resetPassword(user.getId(), hash);
+        if (!ok)
+            throw new Exception("Failed to reset password in database.");
+
         user.setPasswordHash(hash);
         user.setForcePwChange(true);
 
@@ -78,5 +107,13 @@ public class UserService {
 
     public void clearUsers() {
         this.userTree.clear();
+    }
+
+    public BST<User> getUsersTree() {
+        return this.userTree;
+    }
+
+    private void setInternalUser(User user) {
+        this.userTree.insert(user);
     }
 }

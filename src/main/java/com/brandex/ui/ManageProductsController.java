@@ -1,203 +1,183 @@
 package com.brandex.ui;
 
+import java.time.format.DateTimeFormatter;
+
 import com.brandex.models.Product;
 import com.brandex.service.ProductService;
 
-import atlantafx.base.theme.Styles;
-import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
-/**
- * ManageProductsController
- *
- * Admin-only view that lists all products in a scrollable table.
- * Each row has Edit and Delete action buttons.
- *
- * FXML path: /com/brandex/fxml/admin/ManageProducts.fxml
- */
 public class ManageProductsController {
 
-    @FXML private VBox   productListBox;   // rows are injected here
-    @FXML private Label  statusLabel;      // feedback messages
+    @FXML
+    private TableView<Product> productsTable;
+    @FXML
+    private TableColumn<Product, String> idColumn;
+    @FXML
+    private TableColumn<Product, String> nameColumn;
+    @FXML
+    private TableColumn<Product, String> brandColumn;
+    @FXML
+    private TableColumn<Product, String> descriptionColumn;
+    @FXML
+    private TableColumn<Product, String> stockColumn;
+    @FXML
+    private TableColumn<Product, String> priceColumn;
+    @FXML
+    private TableColumn<Product, String> categoryColumn;
+    @FXML
+    private TableColumn<Product, String> ratingColumn;
+    @FXML
+    private TableColumn<Product, String> imageURLColumn;
+    @FXML
+    private TableColumn<Product, String> dateCreatedColumn;
+    @FXML
+    private TableColumn<Product, Void> actionsColumn;
+
+    @FXML
+    private Button addProductBtn;
 
     private final ProductService productService = ProductService.getInstance();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     @FXML
     public void initialize() {
-        refreshList();
+        System.out.println("ManageProductsController initialized");
+        setupTable();
+        loadProducts();
     }
 
-    // ── Build / Refresh ───────────────────────────────────────────────────────
-
-    /**
-     * Clears and rebuilds the product list from the in-memory LinkedList.
-     * Called on load and after every create/update/delete operation.
-     */
-    public void refreshList() {
-        productListBox.getChildren().clear();
-
-        productService.getAllProducts().traverse(product -> {
-            productListBox.getChildren().add(buildRow(product));
+    private void setupTable() {
+        idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId()));
+        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        brandColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBrand()));
+        descriptionColumn
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
+        stockColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getStock())));
+        priceColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getPrice())));
+        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory()));
+        ratingColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getRating())));
+        imageURLColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getImageUrl()));
+        dateCreatedColumn.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getCreatedAt() != null) {
+                return new SimpleStringProperty(cellData.getValue().getCreatedAt().format(formatter));
+            }
+            return new SimpleStringProperty("N/A");
         });
 
-        if (productListBox.getChildren().isEmpty()) {
-            Label empty = new Label("No products found. Use 'Add Product' to create one.");
-            empty.getStyleClass().add(Styles.TEXT_MUTED);
-            empty.setPadding(new Insets(24));
-            productListBox.getChildren().add(empty);
-        }
+        setupActionsColumn();
     }
 
-    // ── Row builder ───────────────────────────────────────────────────────────
+    private void setupActionsColumn() {
+        actionsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
+            private final HBox container = new HBox(editBtn, deleteBtn);
 
-    private HBox buildRow(Product product) {
-        HBox row = new HBox(12);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(10, 16, 10, 16));
-        row.getStyleClass().addAll("product-row");
+            {
+                container.setAlignment(Pos.CENTER);
+                editBtn.getStyleClass().add("btn-edit");
+                deleteBtn.getStyleClass().add("btn-delete");
 
-        // ── Name + category ──
-        VBox nameBox = new VBox(2);
-        Label nameLabel = new Label(product.getName());
-        nameLabel.getStyleClass().add(Styles.TEXT_BOLD);
-        Label catLabel  = new Label(product.getCategory() != null ? product.getCategory() : "—");
-        catLabel.getStyleClass().add(Styles.TEXT_MUTED);
-        nameBox.getChildren().addAll(nameLabel, catLabel);
-        HBox.setHgrow(nameBox, Priority.ALWAYS);
+                editBtn.setOnAction(event -> {
+                    Product product = getTableView().getItems().get(getIndex());
+                    handleEditProduct(product);
+                });
 
-        // ── Brand ──
-        Label brandLabel = new Label(product.getBrand() != null ? product.getBrand() : "—");
-        brandLabel.setMinWidth(90);
+                deleteBtn.setOnAction(event -> {
+                    Product product = getTableView().getItems().get(getIndex());
+                    handleDelete(product);
+                });
+            }
 
-        // ── Price ──
-        Label priceLabel = new Label(String.format("$%.2f", product.getPrice()));
-        priceLabel.setMinWidth(70);
-
-        // ── Stock (colour-coded) ──
-        Label stockLabel = new Label(product.getStock() + " in stock");
-        stockLabel.setMinWidth(90);
-        if (product.getStock() == 0)
-            stockLabel.setTextFill(Color.web("#e74c3c"));
-        else if (product.getStock() <= 5)
-            stockLabel.setTextFill(Color.web("#f39c12"));
-
-        // ── Action buttons ──
-        Button editBtn   = new Button("Edit");
-        Button deleteBtn = new Button("Delete");
-        editBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.ACCENT);
-        deleteBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.DANGER);
-        editBtn.setMinWidth(60);
-        deleteBtn.setMinWidth(70);
-
-        editBtn.setOnAction(e -> handleEdit(product));
-        deleteBtn.setOnAction(e -> handleDelete(product));
-
-        HBox actions = new HBox(8, editBtn, deleteBtn);
-        actions.setAlignment(Pos.CENTER_RIGHT);
-
-        row.getChildren().addAll(nameBox, brandLabel, priceLabel, stockLabel, actions);
-        return row;
-    }
-
-    // ── Handlers ──────────────────────────────────────────────────────────────
-
-    /** Navigate to the ProductForm pre-populated with this product's data. */
-    private void handleEdit(Product product) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/brandex/fxml/admin/ProductForm.fxml"));
-            Node formView = loader.load();
-
-            ProductFormController formController = loader.getController();
-            formController.loadProduct(product);           // pre-fill the form
-            formController.setOnSaveCallback(this::refreshList); // refresh table after save
-
-            // Replace the content area (walk up to DashboardController's StackPane)
-            StackPane contentArea = getContentArea();
-            if (contentArea != null) contentArea.getChildren().setAll(formView);
-
-        } catch (Exception e) {
-            showStatus("Error opening edit form: " + e.getMessage(), true);
-            e.printStackTrace();
-        }
-    }
-
-    /** Show a confirmation dialog then delete. */
-    private void handleDelete(Product product) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Delete Product");
-        confirm.setHeaderText("Delete \"" + product.getName() + "\"?");
-        confirm.setContentText(
-                "This will permanently remove the product from the database\n"
-              + "and all in-memory structures. This cannot be undone.");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    productService.deleteProduct(product);       // DB + BST + LinkedList
-                    showStatus("\"" + product.getName() + "\" deleted successfully.", false);
-                    refreshList();
-                } catch (Exception ex) {
-                    showStatus("Delete failed: " + ex.getMessage(), true);
-                    ex.printStackTrace();
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(container);
                 }
             }
         });
     }
 
-    // ── Navigate to Add Product form ──────────────────────────────────────────
+    private void loadProducts() {
+        if (productService.getProductsTree().isEmpty()) {
+            productService.loadProducts();
+        }
+
+        ObservableList<Product> products = FXCollections.observableArrayList();
+        productService.forEachProduct(products::add);
+        productsTable.setItems(products);
+    }
 
     @FXML
     private void handleAddProduct() {
+        showProductForm(null);
+    }
+
+    private void handleEditProduct(Product product) {
+        showProductForm(product);
+    }
+
+    private void showProductForm(Product product) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/brandex/fxml/admin/ProductForm.fxml"));
-            Node formView = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/brandex/fxml/admin/ProductForm.fxml"));
+            VBox root = loader.load();
 
-            ProductFormController formController = loader.getController();
-            formController.setOnSaveCallback(this::refreshList);  // refresh on return
+            ProductFormController controller = loader.getController();
+            controller.setProduct(product);
 
-            StackPane contentArea = getContentArea();
-            if (contentArea != null) contentArea.getChildren().setAll(formView);
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(product == null ? "Add Product" : "Edit Product - " + product.getName());
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(productsTable.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+            dialogStage.showAndWait();
+
+            if (controller.isSaved()) {
+                loadProducts();
+            }
 
         } catch (Exception e) {
-            showStatus("Error opening add form: " + e.getMessage(), true);
             e.printStackTrace();
+            System.err.println("Error opening product form: " + e.getMessage());
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    private void handleDelete(Product product) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete");
+        alert.setHeaderText("Delete Product: " + product.getName());
+        alert.setContentText("Are you sure you want to delete this product? This action cannot be undone.");
 
-    private void showStatus(String msg, boolean isError) {
-        Platform.runLater(() -> {
-            statusLabel.setText(msg);
-            statusLabel.setTextFill(isError ? Color.web("#e74c3c") : Color.web("#2ecc71"));
-            statusLabel.setVisible(true);
-        });
-    }
-
-    /**
-     * Walks up the scene graph to find the DashboardController's contentArea
-     * StackPane so we can swap views without needing a direct reference.
-     */
-    private StackPane getContentArea() {
-        Node node = productListBox;
-        while (node != null) {
-            node = node.getParent();
-            if (node instanceof StackPane sp && sp.getId() != null
-                    && sp.getId().equals("contentArea")) {
-                return sp;
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                productService.deleteProduct(product);
+                loadProducts();
+            } catch (Exception e) {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Error");
+                error.setHeaderText("Failed to Delete Product");
+                error.setContentText(e.getMessage());
+                error.showAndWait();
             }
         }
-        return null;
     }
 }
