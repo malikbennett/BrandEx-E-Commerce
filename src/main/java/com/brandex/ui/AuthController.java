@@ -136,9 +136,6 @@ public class AuthController {
 
     @FXML
     private void initialize() {
-        if (loginEmailField != null)
-            loginEmailField.setText("brandex.project@gmail.com");
-        if (loginPasswordField != null)
-            loginPasswordField.setText("password");
+
     }
 }

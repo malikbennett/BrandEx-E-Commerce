@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
 <StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.DashboardController">
    <children>
@@ -26,9 +25,9 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                                  <children>
-                                    <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showHome" text="Home" />
                                     <HBox fx:id="adminControls" alignment="CENTER" spacing="8.0">
                                        <children>
+                                          <Label alignment="CENTER" minWidth="65.0" styleClass="title-1" text="BRANDEX" HBox.hgrow="ALWAYS" />
                                           <Separator orientation="VERTICAL" prefHeight="200.0" />
                                           <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageProducts" text="Manage Products" />
                                           <Button layoutX="120.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageOrders" text="Manage Orders" />
@@ -53,7 +52,7 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="0.0" spacing="24.0" style="-fx-border-width: 0 0 2px 0;">
                            <children>
-                              <Label alignment="CENTER" styleClass="title-1" text="BRANDEX" />
+                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showHome" text="Home" />
                               <Region HBox.hgrow="ALWAYS" />
                               <HBox>
                                  <children>
@@ -79,13 +78,6 @@
                      </children>
                   </VBox>
                </top>
-               <bottom>
-                  <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title-1" text="BRANDEX" />
-                     </children>
-                  </HBox>
-               </bottom>
                <center>
                   <StackPane fx:id="contentArea" BorderPane.alignment="CENTER" />
                </center>
