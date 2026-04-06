@@ -11,6 +11,9 @@ target/
 *.class
 *.jar
 *.war
+*.exe
+*.msi
+*.zip
 
 # ===========================
 # VS Code
