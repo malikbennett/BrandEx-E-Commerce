@@ -119,9 +119,6 @@ public class DashboardController {
             adminControls.setManaged(false);
 
         }
-        // loads the products and cart
-        ProductService.getInstance().loadProducts();
-        CartService.getInstance().loadCart();
         showProducts();
     }
 }

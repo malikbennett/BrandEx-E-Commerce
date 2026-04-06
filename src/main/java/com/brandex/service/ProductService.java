@@ -25,16 +25,16 @@ public class ProductService {
         });
     }
 
-    public void addProduct(Product product) throws Exception {
+    public void addProduct(Product product) {
         if (product == null)
-            throw new Exception("Product cannot be null.");
+            throw new IllegalArgumentException("Product cannot be null.");
         this.productTree.insert(product);
     }
 
-    public LinkedList<Product> searchByKeyword(String keyword) throws Exception {
+    public LinkedList<Product> searchByKeyword(String keyword) {
 
         if (keyword == null)
-            throw new Exception("Keyword cannot be null.");
+            throw new IllegalArgumentException("Keyword cannot be null.");
         if (keyword.isEmpty())
             keyword = this.searchQuery;
 
@@ -61,6 +61,10 @@ public class ProductService {
         return found[0];
     }
 
+    public BST<Product> getProductTree() {
+        return productTree;
+    }
+
     public String getSearchQuery() {
         return this.searchQuery;
     }
@@ -69,4 +73,7 @@ public class ProductService {
         this.searchQuery = searchQuery;
     }
 
+    public void clearProducts() {
+        this.productTree.clear();
+    }
 }

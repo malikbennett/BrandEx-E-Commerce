@@ -94,4 +94,13 @@ public class LinkedList<T> {
     public Node<T> getHead() {
         return this.head;
     }
+
+    public boolean isEmpty() {
+        return (this.head == null && this.tail == null);
+    }
+
+    public void clear() {
+        this.head = null;
+        this.tail = null;
+    }
 }

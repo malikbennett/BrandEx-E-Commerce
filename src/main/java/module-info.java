@@ -10,7 +10,7 @@ module com.brandex {
 
     opens com.brandex to javafx.fxml, javafx.graphics;
     opens com.brandex.ui to javafx.fxml;
-    opens com.brandex.models to javafx.fxml;
+    opens com.brandex.models to javafx.fxml, javafx.base;
 
     exports com.brandex;
 }
