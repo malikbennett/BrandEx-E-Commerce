@@ -3,6 +3,7 @@ package com.brandex;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -29,6 +30,7 @@ public class App extends Application {
         stage.setMinWidth(640);
         stage.setMinHeight(360);
         stage.setTitle("BrandEx Online Store");
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("/com/brandex/images/icons/logo.png")));
         scene = setScene();
         stage.setScene(scene);
         stage.show();
