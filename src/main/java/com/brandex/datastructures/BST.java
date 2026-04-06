@@ -178,4 +178,8 @@ public class BST<T> {
     public boolean isEmpty() {
         return root == null;
     }
+
+    public void clear() {
+        root = null;
+    }
 }

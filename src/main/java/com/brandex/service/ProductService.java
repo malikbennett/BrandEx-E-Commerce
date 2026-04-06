@@ -73,4 +73,7 @@ public class ProductService {
         this.searchQuery = searchQuery;
     }
 
+    public void clearProducts() {
+        this.productTree.clear();
+    }
 }

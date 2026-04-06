@@ -113,5 +113,7 @@ public class AuthService {
     public void logout() {
         currentUser = null;
         CartService.getInstance().clearCart();
+        ProductService.getInstance().clearProducts();
+        UserService.getInstance().clearUsers();
     }
 }

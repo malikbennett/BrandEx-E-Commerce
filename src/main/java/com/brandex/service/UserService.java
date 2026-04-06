@@ -76,4 +76,7 @@ public class UserService {
         EmailSender.send(user.getEmail(), subject, body);
     }
 
+    public void clearUsers() {
+        this.userTree.clear();
+    }
 }
