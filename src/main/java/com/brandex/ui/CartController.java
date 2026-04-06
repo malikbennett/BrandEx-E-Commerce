@@ -22,9 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class CartController {
-    CartService cartService = CartService.getInstance();
-    ProductService productService = ProductService.getInstance();
-
     private ModalPane modalPane;
     private Node cartView;
 
@@ -34,8 +31,10 @@ public class CartController {
     @FXML
     private VBox cartBox;
 
+    CartService cartService = CartService.getInstance();
+    ProductService productService = ProductService.getInstance();
+
     public void initialize() {
-        System.out.println("CartController initialized");
         loadCart();
     }
 
@@ -95,7 +94,9 @@ public class CartController {
     }
 
     public void loadCart() {
-
+        if (cartService.getCartItems().isEmpty()) {
+            cartService.loadCart();
+        }
         cartBox.getChildren().clear();
 
         try {

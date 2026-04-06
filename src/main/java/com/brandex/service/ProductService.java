@@ -122,7 +122,7 @@ public class ProductService {
      */
     public LinkedList<Product> searchByKeyword(String keyword) throws Exception {
         if (keyword == null)
-            throw new Exception("Keyword cannot be null.");
+            throw new IllegalArgumentException("Keyword cannot be null.");
         if (keyword.isEmpty())
             keyword = this.searchQuery;
 
@@ -172,5 +172,9 @@ public class ProductService {
 
     public void setSearchQuery(String q) {
         this.searchQuery = q;
+    }
+
+    public void clearProducts() {
+        this.productTree.clear();
     }
 }
