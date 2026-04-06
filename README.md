@@ -1,2 +1,632 @@
-# BrandEx E-Commerce
+# BrandEx E-Commerce Platform
 
+> **⚠️ Pre-release Notice:** This is an active pre-release (v0.9.0-beta). Core features are functional, but some areas (Order History, Checkout) are still under development.
+
+A premium, full-featured desktop E-Commerce application built with **JavaFX** and **PostgreSQL**, engineered with custom data structures and enterprise-level design patterns.
+
+---
+
+## 📋 Table of Contents
+
+1. [Project Overview](#-project-overview)
+2. [Technical Architecture](#-technical-architecture)
+3. [System Requirements](#-system-requirements)
+4. [Setup & Installation](#-setup--installation)
+   - [Database Setup](#database-setup)
+   - [Configuration](#configuration)
+   - [Running the Application](#running-the-application)
+   - [Building the Installer](#building-the-installer)
+5. [Customer Features](#-customer-features)
+   - [Account Management](#account-management)
+   - [Shopping](#shopping)
+   - [Cart Management](#cart-management)
+   - [Checkout & Orders](#checkout--orders)
+6. [Admin Features](#-admin-features)
+   - [Product Management](#product-management)
+   - [User Management](#user-management)
+   - [Order Processing](#order-processing)
+7. [UML Diagrams](#-uml-diagrams)
+   - [Use Case Diagram](#use-case-diagram)
+   - [Class Diagram](#class-diagram)
+   - [Sequence Diagram](#sequence-diagram)
+8. [FAQs & Troubleshooting](#-faqs--troubleshooting)
+9. [Known Issues & Limitations](#-known-issues--limitations)
+
+---
+
+## 🏬 Project Overview
+
+BrandEx is a desktop-based E-Commerce platform for browsing, purchasing, and managing products. It provides two distinct experiences:
+
+- **Customer Portal** — Browse products, manage a cart, place orders, and view your profile.
+- **Admin Dashboard** — Manage products, users, and order fulfillment from a central control panel.
+
+---
+
+## 🏗️ Technical Architecture
+
+### Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Java 25 |
+| UI Framework | JavaFX 25 |
+| UI Theme | AtlantaFX (Cupertino Dark) |
+| Database | PostgreSQL |
+| Build Tool | Apache Maven |
+| Email | Jakarta Mail |
+| Packaging | `jpackage` (Windows EXE/MSI) |
+
+### Package Structure
+
+```
+com.brandex/
+├── App.java                # JavaFX Application entry point
+├── Main.java               # Launcher entry point (jpackage safe)
+├── command/                # Command Pattern (Undo/Redo cart actions)
+│   ├── Command.java
+│   ├── CartAddCommand.java
+│   └── CartRemoveCommand.java
+├── database/
+│   └── JDBC.java           # Centralized prepared statement executor
+├── datastructures/         # Custom implementations (required)
+│   ├── BST.java            # Binary Search Tree (Products, Users)
+│   ├── LinkedList.java     # Linked List (Cart items)
+│   ├── Stack.java          # Stack (Undo/Redo)
+│   └── Node.java
+├── models/                 # Plain data models
+│   ├── Product.java
+│   ├── User.java
+│   ├── Cart.java, CartItem.java
+│   ├── Order.java, OrderItem.java
+│   └── enums/
+│       ├── OrderStatus.java
+│       ├── PaymentMethod.java
+│       └── UserStatus.java
+├── repository/             # Direct DB interaction (CRUD)
+│   ├── ProductRepository.java
+│   ├── UserRepository.java
+│   ├── CartRepository.java
+│   └── OrderRepository.java
+├── service/                # Business logic layer
+│   ├── AuthService.java
+│   ├── ProductService.java
+│   ├── CartService.java
+│   └── UserService.java
+├── ui/                     # JavaFX Controllers
+│   ├── AuthController.java
+│   ├── DashboardController.java
+│   ├── ProductCatalogController.java
+│   ├── CartController.java
+│   ├── ProfileController.java
+│   ├── ManageProductsController.java
+│   ├── ManageUsersController.java
+│   ├── ProductFormController.java
+│   └── EditUserDialogController.java
+└── utilities/
+    ├── EmailSender.java
+    ├── ImageLoader.java
+    ├── OTPGenerator.java
+    ├── PasswordHasher.java
+    └── ConfigLoader.java
+```
+
+### Design Patterns in Use
+
+| Pattern | Where Used |
+|---|---|
+| **Singleton** | All Services and Repositories |
+| **Repository** | `ProductRepository`, `UserRepository`, `CartRepository`, `OrderRepository` |
+| **Service Layer** | `AuthService`, `ProductService`, `CartService`, `UserService` |
+| **Command Pattern** | Cart add/remove with full undo/redo support |
+| **BST (Binary Search Tree)** | In-memory product and user stores; efficient sorted traversal |
+| **Linked List** | Cart item storage |
+| **Stack** | Undo/Redo command history |
+
+---
+
+## 💻 System Requirements
+
+### End User (Running the Installer)
+- **OS**: Windows 10 or later (64-bit)
+- **Memory**: 4 GB RAM minimum (8 GB recommended)
+- **Storage**: 300 MB free disk space
+- **Network**: Internet connection for product images and email notifications.
+
+### Developer (Building from Source)
+- **JDK**: Java 25+
+- **Build Tool**: Apache Maven 3.8+
+- **Database**: PostgreSQL 14+
+- **IDE**: IntelliJ IDEA, VS Code, or Eclipse (with Java extensions)
+
+---
+
+## ⚙️ Setup & Installation
+
+### Database Setup
+
+1. **Install PostgreSQL** and create a new database:
+   ```sql
+   CREATE DATABASE brandex;
+   ```
+
+2. **Run the schema script** to create all required tables:
+   ```sql
+   -- Users table
+   CREATE TABLE users (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     username VARCHAR(50) UNIQUE NOT NULL,
+     email VARCHAR(100) UNIQUE NOT NULL,
+     first_name VARCHAR(50),
+     last_name VARCHAR(50),
+     phone_number VARCHAR(20),
+     shipping_address TEXT,
+     role VARCHAR(20) DEFAULT 'customer',
+     status VARCHAR(20) DEFAULT 'ACTIVE',
+     password_hash TEXT NOT NULL,
+     prev_hash_1 TEXT,
+     prev_hash_2 TEXT,
+     otp_hash TEXT,
+     otp_used BOOLEAN DEFAULT FALSE,
+     force_pw_change BOOLEAN DEFAULT FALSE,
+     profile_image_url TEXT,
+     created_at TIMESTAMPTZ DEFAULT NOW()
+   );
+
+   -- Products table
+   CREATE TABLE products (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     name VARCHAR(100) NOT NULL,
+     description TEXT,
+     category VARCHAR(50),
+     brand VARCHAR(50),
+     image_url TEXT,
+     price NUMERIC(10, 2) DEFAULT 0.00,
+     rating NUMERIC(3, 1) DEFAULT 0.0,
+     stock INT DEFAULT 0,
+     created_at TIMESTAMPTZ DEFAULT NOW()
+   );
+
+   -- Cart table
+   CREATE TABLE cart (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     total_price NUMERIC(10, 2) DEFAULT 0.00,
+     updated_at TIMESTAMPTZ DEFAULT NOW()
+   );
+
+   -- Cart items table
+   CREATE TABLE cart_item (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     cart_id UUID REFERENCES cart(id) ON DELETE CASCADE,
+     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+     quantity INT DEFAULT 1,
+     total_price NUMERIC(10, 2) DEFAULT 0.00,
+     created_at TIMESTAMPTZ DEFAULT NOW()
+   );
+
+   -- Orders table
+   CREATE TABLE orders (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     user_id UUID REFERENCES users(id),
+     order_number VARCHAR(50) UNIQUE,
+     status VARCHAR(30) DEFAULT 'PENDING',
+     shipping_address TEXT,
+     payment_method VARCHAR(30),
+     total NUMERIC(10, 2) DEFAULT 0.00,
+     created_at TIMESTAMPTZ DEFAULT NOW()
+   );
+   ```
+
+3. **(Optional) Create an initial admin user** manually via SQL:
+   ```sql
+   -- Password: "admin123" — CHANGE THIS IMMEDIATELY after first login
+   INSERT INTO users (username, email, first_name, last_name, password_hash, role, status, force_pw_change)
+   VALUES ('admin', 'admin@brandex.com', 'Admin', 'User', '<bcrypt_hash>', 'admin', 'ACTIVE', TRUE);
+   ```
+
+---
+
+### Configuration
+
+The application reads from a `config.properties` file located at:
+```
+src/main/resources/com/brandex/config.properties
+```
+
+Create this file with the following keys:
+
+```properties
+# Database Connection
+db.url=jdbc:postgresql://localhost:5432/brandex
+db.user=YOUR_DB_USERNAME
+db.password=YOUR_DB_PASSWORD
+
+# Product Images Base URL (where your product images are hosted)
+db.PRODUCT_IMAGE_PATH=https://your-image-host.com/products/
+
+# Email (SMTP via Gmail — requires an App Password)
+mail.username=your-email@gmail.com
+mail.password=your-gmail-app-password
+mail.from=your-email@gmail.com
+```
+
+> **Note on Gmail App Passwords:** To use Gmail for sending OTP and notification emails, enable 2-Factor Authentication on your Google account, then create an "App Password" under your Google Account Security settings. Use that 16-character password in `mail.password`.
+
+---
+
+### Running the Application
+
+**Option 1 — Via Maven (Development)**
+```bash
+mvn clean javafx:run
+```
+
+**Option 2 — Via the Windows Installer (End Users)**
+1. Download the `BrandEx-1.0.exe` from the [Releases](https://github.com/malikbennett/BrandEx-E-Commerce/releases) page.
+2. Run the installer and follow the prompts.
+3. Launch **BrandEx** from the Desktop or Start Menu shortcut.
+
+---
+
+### Building the Installer
+
+To build the Windows installer from source:
+
+```bash
+# Step 1: Package the app and copy all dependencies
+mvn clean package dependency:copy-dependencies
+
+# Step 2: Copy the main JAR into the dependency folder
+cp target/brandex-1.0-SNAPSHOT.jar target/dependency/
+
+# Step 3: Run jpackage to create the .exe installer
+jpackage \
+  --input target/dependency \
+  --name BrandEx \
+  --main-jar brandex-1.0-SNAPSHOT.jar \
+  --main-class com.brandex.Main \
+  --type exe \
+  --app-version 1.0 \
+  --vendor "BrandEx Group" \
+  --icon src/main/resources/com/brandex/images/icons/logo.ico \
+  --win-shortcut \
+  --win-menu \
+  --win-dir-chooser \
+  --win-shortcut-prompt \
+  --win-menu-group "BrandEx"
+```
+
+The resulting `BrandEx-1.0.exe` will appear in your project root.
+
+---
+
+## 👤 Customer Features
+
+### Account Management
+
+#### Registering an Account
+
+1. Launch BrandEx — the Login/Register screen appears.
+2. Click the **Register** tab.
+3. Enter your **First Name**, **Last Name**, **Email**, and **Username**.
+4. Click **Register**.
+5. A **One-Time Password (OTP)** will be sent to your email address.
+6. On the OTP screen, enter the code from your email.
+7. You will be prompted to **set a permanent password** on first login.
+
+> **Screenshot placeholder:** `[Register Screen]`
+
+#### Logging In
+
+1. On the Login tab, enter your registered **Email** and **Password**.
+2. Click **Login**.
+3. If your password has been reset by an admin, you will be required to change it before proceeding.
+
+> **Screenshot placeholder:** `[Login Screen]`
+
+#### Viewing & Editing Your Profile
+
+1. Once logged in, click the **Profile** button in the top navigation bar.
+2. Your profile page displays:
+   - Full Name, Username, and Email
+   - Phone Number and Shipping Address
+   - Account Role and Status (badge)
+3. Click **Edit Profile** to update your information *(coming soon)*.
+4. Click **Change Password** to update your credentials *(coming soon)*.
+5. Click **Logout** to securely end your session.
+
+> **Screenshot placeholder:** `[Profile Page]`
+
+---
+
+### Shopping
+
+#### Browsing Products
+
+1. After logging in, the **Product Catalog** is displayed by default.
+2. Products are shown as cards with image, name, brand, price, rating, and stock.
+3. Use the **Search Bar** at the top to filter products by name in real time.
+4. Clear the search bar and press Enter to show all products again.
+
+> **Screenshot placeholder:** `[Product Catalog]`
+
+#### Viewing Product Details
+
+- Each product card shows:
+  - Product Name & Brand
+  - Price and current Stock
+  - Star Rating
+  - Product Image
+
+> **Screenshot placeholder:** `[Product Card]`
+
+#### Adding to Cart
+
+1. On any product card, click the **Add to Cart** button.
+2. The item is immediately added to your session cart.
+3. You can add the same item multiple times to increase quantity.
+4. The cart supports **Undo** and **Redo** for accidentally added/removed items.
+
+> **Screenshot placeholder:** `[Add to Cart Action]`
+
+---
+
+### Cart Management
+
+1. Click the **Cart** icon/button in the navigation bar to open the cart panel.
+2. The cart displays:
+   - Each item with its name and total price
+   - The running **Cart Total**
+3. To **remove an item**, click the remove or delete button next to it.
+4. Use **Undo** to restore a removed item.
+5. Use **Redo** to re-apply a change.
+6. Click **Checkout** to proceed to the payment screen.
+
+> **Screenshot placeholder:** `[Cart Panel]`
+
+---
+
+### Checkout & Orders
+
+#### Placing an Order
+
+1. From the Cart, click **Checkout**.
+2. Review your cart summary and total.
+3. Confirm your **Shipping Address**.
+4. Select a **Payment Method**.
+5. Click **Place Order** to finalize.
+
+> **Screenshot placeholder:** `[Checkout Screen]` *(Feature in development)*
+
+#### Viewing Order History
+
+1. Click **Orders** in the navigation bar.
+2. A list of your past orders is shown with:
+   - Order Number
+   - Date placed
+   - Status (Pending, Shipped, Delivered)
+   - Order Total
+
+> **Screenshot placeholder:** `[Order History Screen]` *(Feature in development)*
+
+---
+
+## 🔧 Admin Features
+
+Admin accounts have access to an extended navigation bar with management tools. Admin access is determined by the `role` field on the user account.
+
+### Product Management
+
+Navigate to: **Admin Nav → Manage Products**
+
+#### Viewing All Products
+
+- A sortable table lists all products in the system.
+- Columns: ID, Name, Brand, Description, Price, Stock, Category, Rating, Image URL, Date Created, Actions.
+
+> **Screenshot placeholder:** `[Manage Products Table]`
+
+#### Adding a New Product
+
+1. Click the **Add Product** button (top-right of the table).
+2. A form dialog opens with empty fields.
+3. Fill in: Name (required), Brand, Category, Price (required), Stock (required), Rating, Image URL, and Description.
+4. Click **Save** to create the product. It is immediately added to the catalog.
+5. Click **Cancel** to discard changes.
+
+> **Screenshot placeholder:** `[Add Product Form]`
+
+#### Editing a Product
+
+1. In the product table, click the **Edit** button on the desired row.
+2. The same form dialog opens, pre-populated with the product's current data.
+3. Modify any fields.
+4. Click **Save**. The product is updated in the database and the in-memory catalog simultaneously.
+
+> **Screenshot placeholder:** `[Edit Product Form]`
+
+#### Deleting a Product
+
+1. Click the **Delete** button on the desired product row.
+2. A confirmation dialog appears: *"Are you sure you want to delete this product? This action cannot be undone."*
+3. Click **OK** to permanently delete. The product is removed from both the database and the live catalog.
+
+> **Screenshot placeholder:** `[Delete Confirmation Dialog]`
+
+---
+
+### User Management
+
+Navigate to: **Admin Nav → Manage Users**
+
+#### Viewing All Users
+
+- A table lists all registered customer accounts.
+- Columns: Full Name, Email, Username, Status, Role, Phone, Address, Joined Date, Actions.
+
+> **Screenshot placeholder:** `[Manage Users Table]`
+
+#### Editing a User's Status and Role
+
+1. Click the **Edit** button on any user row.
+2. An **Edit User Dialog** opens.
+3. Modify the user's **Status** (Active, Suspended, Banned) and/or **Role** (customer, admin).
+4. Click **Save** to apply changes.
+
+> **Screenshot placeholder:** `[Edit User Dialog]`
+
+#### Resetting a User's Password
+
+1. Click the **Reset Password** button in the Edit User Dialog.
+2. A temporary password is automatically generated and emailed to the user.
+3. The user's account is flagged with `force_pw_change = true`, requiring them to set a new password on next login.
+
+> **Screenshot placeholder:** `[Reset Password Email]`
+
+#### Deleting a User
+
+1. Click the **Delete** button on the desired user row.
+2. Confirm the deletion in the dialog.
+3. The user account is permanently removed from the database.
+
+> **Screenshot placeholder:** `[Delete User Confirmation]`
+
+---
+
+### Order Processing
+
+Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
+
+- View all pending orders in a queue.
+- Process and update order statuses (Pending → Shipped → Delivered).
+- Send customer notifications upon status changes.
+
+> **Screenshot placeholder:** `[Manage Orders Screen]` *(Coming Soon)*
+
+---
+
+## 📊 UML Diagrams
+
+> **Note:** The diagrams below are placeholders. Replace each image path with your actual exported diagram image file.
+
+### Use Case Diagram
+
+> *Illustrates the interactions between system actors (Customer, Admin) and the available use cases.*
+
+```
+[PLACEHOLDER: Insert Use Case Diagram image here]
+e.g., ![Use Case Diagram](docs/diagrams/use_case_diagram.png)
+```
+
+**Actors:**
+- **Guest** — Can view the login/register screen.
+- **Customer** — Can browse products, manage cart, place orders, and view their profile.
+- **Administrator** — Has all Customer capabilities plus product CRUD, user management, and order processing.
+
+**Key Use Cases:**
+- Register Account / Login / Logout
+- Browse & Search Products
+- Manage Cart (Add, Remove, Undo, Redo)
+- Checkout & Place Order
+- View Order History
+- [Admin] Add / Edit / Delete Products
+- [Admin] Edit / Reset / Delete Users
+- [Admin] Process Orders
+
+---
+
+### Class Diagram
+
+> *Illustrates the domain model and the relationships between key classes.*
+
+```
+[PLACEHOLDER: Insert Class Diagram image here]
+e.g., ![Class Diagram](docs/diagrams/class_diagram.png)
+```
+
+**Key Relationships:**
+- `User` **1—1** `Cart` (one cart per user)
+- `Cart` **1—N** `CartItem` (a cart has many items)
+- `CartItem` **N—1** `Product` (each item references a product)
+- `User` **1—N** `Order` (a user can have many orders)
+- `Order` **1—N** `OrderItem`
+- `ProductService` **uses** `BST<Product>` for in-memory storage
+- `UserService` **uses** `BST<User>` for in-memory storage
+- `CartService` **uses** `LinkedList<CartItem>` and `Stack<Command>` for undo/redo
+
+---
+
+### Sequence Diagram
+
+> *Illustrates the flow of messages through the system for a key workflow.*
+
+#### Suggested Workflow: Customer Registration & OTP Verification
+
+```
+[PLACEHOLDER: Insert Sequence Diagram image here]
+e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
+```
+
+**Flow:**
+1. User fills in the Register form → `AuthController`
+2. `AuthController` calls `AuthService.register()`
+3. `AuthService` checks `UserRepository` for existing email/username conflicts
+4. `AuthService` generates OTP via `OTPGenerator`
+5. OTP hash stored in DB via `UserRepository.createUser()`
+6. `EmailSender.send()` dispatches OTP to user's inbox
+7. User enters OTP → `AuthController` calls `AuthService.verifyOtp()`
+8. System marks OTP as used and redirects to `changePassword` flow
+
+---
+
+## ❓ FAQs & Troubleshooting
+
+### General FAQs
+
+**Q: I didn't receive an OTP email after registering. What do I do?**
+> Check your Spam/Junk folder first. If it is not there, ensure your email address was entered correctly. If the problem persists, contact your system administrator.
+
+**Q: I forgot my password. How do I reset it?**
+> Contact your administrator. They can issue a system-generated temporary password which will be emailed to you. You will be required to change it upon your next login.
+
+**Q: Can I use BrandEx on Mac or Linux?**
+> The Windows `.exe` installer is Windows-only. However, developers can build and run the application from source on any platform that supports Java 25 and JavaFX.
+
+**Q: Is my data safe?**
+> All passwords are stored using **BCrypt hashing** — they are never stored in plain text. Communications with the database use **prepared statements** to prevent SQL injection.
+
+---
+
+### Common Setup Issues
+
+| Problem | Likely Cause | Solution |
+|---|---|---|
+| `Error loading FXML` on startup | Missing or corrupt resource files | Ensure you built from source with `mvn clean package` |
+| `Connection refused` (DB error) | PostgreSQL not running | Start your PostgreSQL service and verify credentials in `config.properties` |
+| Application opens but is blank | FXML controller binding issue | Check console for a `NullPointerException`, ensure all `fx:id` values are correct |
+| OTP email not received | SMTP credentials invalid | Regenerate your Gmail App Password and update `config.properties` |
+| Installer runs but app crashes | Missing JavaFX dependencies in package | Rebuild with `jpackage` using the full `target/dependency` folder as `--input` |
+| `NoClassDefFoundError` for JavaFX | Main class extends `Application` directly | Ensure the entry point is `com.brandex.Main`, not `com.brandex.App` |
+
+---
+
+## ⚠️ Known Issues & Limitations
+
+- **Order History** screen is scaffolded but not yet fully implemented.
+- **Checkout** flow (payment processing, order confirmation screen) is still under development.
+- **Profile Edit** and **Change Password** buttons on the Profile page are not yet connected to an edit form.
+- **Product Search** only filters by product name (not brand, category, or description).
+- The application currently targets **Windows only** for the packaged installer.
+
+---
+
+## 📬 Contact & Support
+
+For bugs, feature requests, or questions:
+- **GitHub Issues**: [Open an Issue](https://github.com/malikbennett/BrandEx-E-Commerce/issues)
+- **Developer**: Malik Bennett
+
+---
+
+*© 2025 BrandEx Group. All rights reserved.*
