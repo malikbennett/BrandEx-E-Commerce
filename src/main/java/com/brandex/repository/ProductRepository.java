@@ -23,24 +23,93 @@ public class ProductRepository {
         try {
             ResultSet rs = JDBC.query(sql);
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getString("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setCategory(rs.getString("category"));
-                product.setBrand(rs.getString("brand"));
-                product.setImageUrl(rs.getString("image_url"));
-                product.setPrice(rs.getDouble("price"));
-                product.setRating(rs.getDouble("rating"));
-                product.setStock(rs.getInt("stock"));
-                product.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
-
-                products.insert(product);
+                products.insert(mapRow(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Database Error: Failed to fetch products. " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("DB Error - listProducts: " + e.getMessage());
         }
         return products;
+    }
+
+    public Product findById(String id) {
+        String sql = "SELECT * FROM products WHERE id = ?::uuid";
+        try {
+            ResultSet rs = JDBC.query(sql, id);
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("DB Error - findById: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public String createProduct(Product product) {
+        String sql = "INSERT INTO products (name, description, category, brand, image_url, price, rating, stock) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        try {
+            ResultSet rs = JDBC.query(sql,
+                    product.getName(),
+                    product.getDescription(),
+                    product.getCategory(),
+                    product.getBrand(),
+                    product.getImageUrl(),
+                    product.getPrice(),
+                    product.getRating(),
+                    product.getStock());
+            if (rs.next())
+                return rs.getString("id");
+        } catch (SQLException e) {
+            System.err.println("DB Error - insertProduct: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean updateProduct(Product p) {
+        String sql = "UPDATE products "
+                + "SET name=?, description=?, category=?, brand=?, image_url=?, price=?, rating=?, stock=? "
+                + "WHERE id=?::uuid";
+        try {
+            JDBC.execute(sql,
+                    p.getName(),
+                    p.getDescription(),
+                    p.getCategory(),
+                    p.getBrand(),
+                    p.getImageUrl(),
+                    p.getPrice(),
+                    p.getRating(),
+                    p.getStock(),
+                    p.getId());
+            return true;
+        } catch (SQLException e) {
+            System.err.println("DB Error - updateProduct: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteProduct(String productId) {
+        try {
+            JDBC.execute("DELETE FROM cart_item WHERE product_id = ?::uuid", productId);
+            JDBC.execute("DELETE FROM products  WHERE id = ?::uuid", productId);
+            return true;
+        } catch (SQLException e) {
+            System.err.println("DB Error - deleteProduct: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private Product mapRow(ResultSet rs) throws SQLException {
+        Product p = new Product();
+        p.setId(rs.getString("id"));
+        p.setName(rs.getString("name"));
+        p.setDescription(rs.getString("description"));
+        p.setCategory(rs.getString("category"));
+        p.setBrand(rs.getString("brand"));
+        p.setImageUrl(rs.getString("image_url"));
+        p.setPrice(rs.getDouble("price"));
+        p.setRating(rs.getDouble("rating"));
+        p.setStock(rs.getInt("stock"));
+        p.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
+        return p;
     }
 }

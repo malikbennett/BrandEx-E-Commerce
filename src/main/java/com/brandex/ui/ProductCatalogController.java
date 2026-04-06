@@ -102,7 +102,7 @@ public class ProductCatalogController {
     }
 
     private void loadProducts() {
-        if (productService.getProductTree().isEmpty()) {
+        if (productService.getProductsTree().isEmpty()) {
             productService.loadProducts();
         }
         productGrid.getChildren().clear();
