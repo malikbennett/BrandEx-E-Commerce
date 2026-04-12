@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
@@ -13,82 +12,76 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.DashboardController">
+<StackPane stylesheets="@../../style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.DashboardController">
    <children>
-      <ScrollPane fitToWidth="true">
-         <content>
-            <BorderPane>
-               <top>
-                  <VBox BorderPane.alignment="CENTER">
+      <BorderPane styleClass="main-bg">
+         <left>
+            <VBox prefWidth="240.0" styleClass="sidebar" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="sidebar-logo" text="BRANDEX" />
+                  <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 0 0 5 10;" text="MAIN NAVIGATION" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showHome" styleClass="sidebar-nav-item" text="🏠  Home" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showCart" styleClass="sidebar-nav-item" text="🛒  My Cart" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showOrders" styleClass="sidebar-nav-item" text="📦  Order History" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showProfile" styleClass="sidebar-nav-item" text="👤  Account Settings" />
+                  <Region prefHeight="30.0" />
+                  <VBox fx:id="adminControls" spacing="10.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="0.0" spacing="16.0" VBox.vgrow="NEVER">
-                           <children>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
-                                 <children>
-                                    <HBox fx:id="adminControls" alignment="CENTER" spacing="8.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <Label alignment="CENTER" minWidth="200.0" styleClass="title-1" text="BRANDEX" HBox.hgrow="ALWAYS" />
-                                          <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                          <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageProducts" text="Manage Products" />
-                                          <Button layoutX="120.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageOrders" text="Manage Orders" />
-                                          <Button layoutX="10.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#showManageUsers" text="Manage Users" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </HBox>
-                              <Region HBox.hgrow="ALWAYS" />
-                              <Label fx:id="welcomeLabel" minWidth="-Infinity" styleClass="text-caption" text="Welcome User" />
-                              <Region HBox.hgrow="ALWAYS" />
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
-                                 <children>
-                                    <ComboBox minWidth="-Infinity" promptText="English" />
-                                    <ComboBox layoutX="140.0" layoutY="10.0" minWidth="-Infinity" promptText="USD" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="0.0" spacing="24.0" style="-fx-border-width: 0 0 2px 0;">
-                           <children>
-                              <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showHome" text="Home" />
-                              <Region HBox.hgrow="ALWAYS" />
-                              <HBox>
-                                 <children>
-                                    <TextField fx:id="searchField" onKeyTyped="#handleSearch" prefWidth="650.0" promptText="Search For Items...">
-                                       <padding>
-                                          <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-                                       </padding></TextField>
-                                 </children>
-                              </HBox>
-                              <Region HBox.hgrow="ALWAYS" />
-                              <HBox alignment="CENTER" spacing="8.0">
-                                 <children>
-                                    <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showCart" text="Cart" />
-                                    <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showOrders" text="Orders" />
-                                    <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#showProfile" text="Account" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-                           </padding>
-                        </HBox>
+                        <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 11; -fx-font-weight: bold; -fx-padding: 0 0 5 10;" text="ADMINISTRATION" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showManageProducts" styleClass="sidebar-nav-item" text="📋  Inventory Control" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showManageOrders" styleClass="sidebar-nav-item" text="🚚  Order Fulfillment" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showManageUsers" styleClass="sidebar-nav-item" text="👥  User Directory" />
                      </children>
                   </VBox>
-               </top>
-               <center>
-                  <StackPane fx:id="contentArea" BorderPane.alignment="CENTER" />
-               </center>
-               <padding>
-                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
-               </padding>
-            </BorderPane>
-         </content>
-      </ScrollPane>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 10; -fx-background-color: rgba(255,255,255,0.03); -fx-background-radius: 10;">
+                     <children>
+                        <VBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="welcomeLabel" style="-fx-font-weight: bold; -fx-font-size: 13;" text="Welcome User" />
+                              <Label style="-fx-font-size: 11; -fx-text-fill: -brand-text-dim;" text="Member" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="top-bar">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="search-field-modern" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-opacity: 0.5;" text="🔍" />
+                              <TextField fx:id="searchField" onKeyTyped="#handleSearch" promptText="Search for products, categories, or brands..." style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" spacing="12.0">
+                           <children>
+                              <ComboBox prefWidth="100.0" promptText="USD" styleClass="flat" />
+                              <ComboBox prefWidth="100.0" promptText="EN" styleClass="flat" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="30.0" right="30.0" top="20.0" />
+                     </padding>
+                  </HBox>
+                  <Separator opacity="0.1" />
+                  <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="20.0" />
+                     </padding>
+                  </StackPane>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+
       <ModalPane fx:id="modalPane" />
    </children>
 </StackPane>

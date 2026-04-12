@@ -13,70 +13,89 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.AuthController">
+<StackPane prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #16161a, #242629);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.AuthController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="450.0" minWidth="250.0" prefWidth="350.0" spacing="16.0" StackPane.alignment="CENTER">
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="450.0" spacing="30.0" styleClass="card-premium">
+         <padding>
+            <Insets bottom="50.0" left="40.0" right="40.0" top="50.0" />
+         </padding>
          <children>
-            <Label fx:id="registerErrorLabel" prefHeight="100.0" prefWidth="1000.0" style="-fx-text-fill: #f44336; -fx-min-height: 0;" wrapText="true" />
-            <VBox alignment="TOP_CENTER" spacing="8.0">
+            <VBox alignment="CENTER" spacing="10.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To BrandEx" textAlignment="CENTER">
-                     <styleClass>
-                        <String fx:value="h1" />
-                        <String fx:value="text" />
-                     </styleClass>
-                  </Text>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Your Gate Way To Effortless Shopping" textAlignment="CENTER">
-                     <styleClass>
-                        <String fx:value="h2" />
-                        <String fx:value="subheading" />
-                     </styleClass></Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -brand-primary; -fx-font-weight: 900; -fx-font-size: 48;" text="BRANDEX" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -brand-text-dim; -fx-font-size: 16;" text="Elevate Your Shopping Experience" />
                </children>
             </VBox>
-            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-               <Tab text="Log In">
-                  <content>
-                        <VBox alignment="CENTER" spacing="16.0" styleClass="surface">
-                           <children>
-                              <TextField fx:id="loginEmailField" promptText="Enter Email" styleClass="text-field" />
-                              <PasswordField fx:id="loginPasswordField" promptText="Enter Password" />
-                              <Label fx:id="loginErrorLabel" style="-fx-text-fill: #f44336; -fx-min-height: 0;" />
-                              <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#handleLogin" styleClass="auth-btn" text="Login" textAlignment="CENTER">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </Button>
-                           </children>
-                        </VBox>
-                  </content>
-               </Tab>
-                  <Tab text="Register">
+            
+            <TabPane side="TOP" styleClass="floating" tabClosingPolicy="UNAVAILABLE">
+               <tabs>
+                  <Tab text="SIGN IN">
                      <content>
-                        <VBox alignment="CENTER" spacing="16.0" styleClass="surface">
+                        <VBox spacing="20.0">
+                           <padding>
+                              <Insets top="30.0" />
+                           </padding>
                            <children>
-                              <HBox spacing="16.0">
+                              <VBox spacing="8.0">
                                  <children>
-                                    <TextField fx:id="firstNameField" promptText="Enter First Name" HBox.hgrow="ALWAYS" />
-                                    <TextField fx:id="lastNameField" promptText="Enter Last Name" HBox.hgrow="ALWAYS" />
+                                    <Label style="-fx-text-fill: -brand-text-dim;" text="Email Address" />
+                                    <TextField fx:id="loginEmailField" prefHeight="45.0" promptText="name@example.com" styleClass="search-field-modern" />
                                  </children>
-                              </HBox>
-                              <HBox spacing="16.0">
+                              </VBox>
+                              <VBox spacing="8.0">
                                  <children>
-                                    <TextField fx:id="registerEmailField" promptText="Enter Email" HBox.hgrow="ALWAYS" />
-                                    <TextField fx:id="usernameField" promptText="Enter Username" HBox.hgrow="ALWAYS" />
+                                    <Label style="-fx-text-fill: -brand-text-dim;" text="Password" />
+                                    <PasswordField fx:id="loginPasswordField" prefHeight="45.0" promptText="••••••••" styleClass="search-field-modern" />
                                  </children>
-                              </HBox>
-                              <Button fx:id="registerBtn" mnemonicParsing="false" onAction="#handleRegister" styleClass="auth-btn" text="Register" textAlignment="CENTER">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </Button>
+                              </VBox>
+                              <Label fx:id="loginErrorLabel" wrapText="true" style="-fx-text-fill: #ef4444; -fx-font-size: 13;" />
+                              <Button fx:id="loginBtn" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" prefHeight="50.0" styleClass="btn-brand" text="CONTINUE" />
                            </children>
                         </VBox>
                      </content>
                   </Tab>
-            </tabs>
+                  <Tab text="REGISTER">
+                     <content>
+                        <VBox spacing="20.0">
+                           <padding>
+                              <Insets top="30.0" />
+                           </padding>
+                           <children>
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-text-fill: -brand-text-dim;" text="First Name" />
+                                          <TextField fx:id="firstNameField" prefHeight="45.0" promptText="First" styleClass="search-field-modern" />
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label style="-fx-text-fill: -brand-text-dim;" text="Last Name" />
+                                          <TextField fx:id="lastNameField" prefHeight="45.0" promptText="Last" styleClass="search-field-modern" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <VBox spacing="8.0">
+                                 <children>
+                                    <Label style="-fx-text-fill: -brand-text-dim;" text="Username" />
+                                    <TextField fx:id="usernameField" prefHeight="45.0" promptText="johndoe" styleClass="search-field-modern" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="8.0">
+                                 <children>
+                                    <Label style="-fx-text-fill: -brand-text-dim;" text="Email" />
+                                    <TextField fx:id="registerEmailField" prefHeight="45.0" promptText="name@example.com" styleClass="search-field-modern" />
+                                 </children>
+                              </VBox>
+                              <Label fx:id="registerErrorLabel" wrapText="true" style="-fx-text-fill: #ef4444; -fx-font-size: 13;" />
+                              <Button fx:id="registerBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" prefHeight="50.0" styleClass="btn-brand" text="CREATE ACCOUNT" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
             </TabPane>
          </children>
       </VBox>

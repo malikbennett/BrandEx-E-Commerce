@@ -89,7 +89,8 @@ public class ProductService {
         String lowerKeyword = keyword.toLowerCase();
 
         this.productTree.traverse(p -> {
-            if (p.getName().toLowerCase().contains(lowerKeyword)) {
+            if (p.getName().toLowerCase().contains(lowerKeyword) || p.getCategory().toLowerCase().contains(lowerKeyword)
+                    || p.getBrand().toLowerCase().contains(lowerKeyword)) {
                 results.insert(p);
             }
         });

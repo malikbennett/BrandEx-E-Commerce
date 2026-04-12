@@ -38,7 +38,9 @@ public class App extends Application {
 
     public static Scene setScene() {
         root = setRoot("main");
-        return new Scene(root);
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(App.class.getResource("/com/brandex/style.css").toExternalForm());
+        return scene;
     }
 
     public static StackPane getRoot() {

@@ -1,7 +1,6 @@
 package com.brandex.ui;
 
 import com.brandex.service.AuthService;
-import com.brandex.utilities.EmailSender;
 import com.brandex.utilities.InputValidator;
 import com.brandex.utilities.ThrowError;
 import com.brandex.models.User;

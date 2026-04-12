@@ -23,7 +23,7 @@ public class CartRepository {
     }
 
     public void createCart(Cart cart) {
-        String sql = "INSERT INTO cart (user_id) VALUES (?::uuid)";
+        String sql = "INSERT INTO carts (user_id) VALUES (?::uuid)";
         try {
             JDBC.execute(sql, cart.getUserId());
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class CartRepository {
 
     public Cart getCart(String condition, String value) {
         String cast = (condition.equals("id") || condition.equals("user_id")) ? "::uuid" : "";
-        String sql = "SELECT * FROM cart WHERE " + condition + " = ?" + cast;
+        String sql = "SELECT * FROM carts WHERE " + condition + " = ?" + cast;
         try {
             ResultSet rs = JDBC.query(sql, value);
             if (rs.next()) {
@@ -151,7 +151,7 @@ public class CartRepository {
     }
 
     public void updateCartTotalPrice(String cartId, double totalPrice) {
-        String sql = "UPDATE cart SET total_price = ? WHERE id = ?::uuid";
+        String sql = "UPDATE carts SET total_price = ? WHERE id = ?::uuid";
         try {
             JDBC.execute(sql, totalPrice, cartId);
         } catch (Exception e) {

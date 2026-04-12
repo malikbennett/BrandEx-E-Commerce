@@ -43,18 +43,21 @@ public class ManageProductsController {
     private TableColumn<Product, String> dateCreatedColumn;
     @FXML
     private TableColumn<Product, Void> actionsColumn;
+    @FXML
+    private javafx.scene.control.TextField searchField;
 
     @FXML
     private Button addProductBtn;
 
+    private final ObservableList<Product> allProducts = FXCollections.observableArrayList();
     private final ProductService productService = ProductService.getInstance();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     @FXML
     public void initialize() {
-        System.out.println("ManageProductsController initialized");
         setupTable();
         loadProducts();
+        setupSearch();
     }
 
     private void setupTable() {
@@ -120,9 +123,29 @@ public class ManageProductsController {
             productService.loadProducts();
         }
 
-        ObservableList<Product> products = FXCollections.observableArrayList();
-        productService.forEachProduct(products::add);
-        productsTable.setItems(products);
+        allProducts.clear();
+        productService.forEachProduct(allProducts::add);
+        productsTable.setItems(allProducts);
+    }
+
+    private void setupSearch() {
+        searchField.textProperty().addListener((obs, old, val) -> {
+            if (val == null || val.isBlank()) {
+                productsTable.setItems(allProducts);
+                return;
+            }
+            String query = val.toLowerCase();
+            ObservableList<Product> filtered = FXCollections.observableArrayList();
+            for (Product p : allProducts) {
+                if (p.getName().toLowerCase().contains(query)
+                        || p.getBrand().toLowerCase().contains(query)
+                        || p.getCategory().toLowerCase().contains(query)
+                        || p.getId().toLowerCase().contains(query)) {
+                    filtered.add(p);
+                }
+            }
+            productsTable.setItems(filtered);
+        });
     }
 
     @FXML

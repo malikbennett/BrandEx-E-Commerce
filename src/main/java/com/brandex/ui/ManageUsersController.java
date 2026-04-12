@@ -45,14 +45,19 @@ public class ManageUsersController {
     private TableColumn<User, String> joinedDateColumn;
     @FXML
     private TableColumn<User, Void> actionsColumn;
+    @FXML
+    private javafx.scene.control.TextField searchField;
 
     private final UserService userService = UserService.getInstance();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+
+    private final ObservableList<User> allUsers = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
         setupTable();
         loadUsers();
+        setupSearch();
     }
 
     private void setupTable() {
@@ -110,9 +115,28 @@ public class ManageUsersController {
             userService.loadUsers();
         }
 
-        ObservableList<User> users = FXCollections.observableArrayList();
-        userService.forEachUser(users::add);
-        userTable.setItems(users);
+        allUsers.clear();
+        userService.forEachUser(allUsers::add);
+        userTable.setItems(allUsers);
+    }
+
+    private void setupSearch() {
+        searchField.textProperty().addListener((obs, old, val) -> {
+            if (val == null || val.isBlank()) {
+                userTable.setItems(allUsers);
+                return;
+            }
+            String query = val.toLowerCase();
+            ObservableList<User> filtered = FXCollections.observableArrayList();
+            for (User u : allUsers) {
+                if ((u.getFirstName() + " " + u.getLastName()).toLowerCase().contains(query)
+                        || u.getUsername().toLowerCase().contains(query)
+                        || u.getEmail().toLowerCase().contains(query)) {
+                    filtered.add(u);
+                }
+            }
+            userTable.setItems(filtered);
+        });
     }
 
     private void handleEditUser(User user) {

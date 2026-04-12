@@ -2,7 +2,6 @@ package com.brandex.ui;
 
 import com.brandex.models.User;
 import com.brandex.service.AuthService;
-import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
 import atlantafx.base.controls.ModalPane;
@@ -21,7 +20,7 @@ public class DashboardController {
     @FXML
     private StackPane contentArea;
     @FXML
-    private HBox adminControls;
+    private javafx.scene.layout.VBox adminControls;
     @FXML
     private TextField searchField;
     @FXML

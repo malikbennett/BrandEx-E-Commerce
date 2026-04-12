@@ -9,21 +9,18 @@ import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 import com.brandex.utilities.ImageLoader;
 
-import atlantafx.base.controls.Card;
-import atlantafx.base.controls.Tile;
-import atlantafx.base.theme.Styles;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 public class ProductCatalogController {
 
@@ -39,7 +36,9 @@ public class ProductCatalogController {
     @FXML
     private Slider maxPriceSlider;
     @FXML
-    private Label priceLabel;
+    private Label priceLabelMin;
+    @FXML
+    private Label priceLabelMax;
     @FXML
     private VBox categoryFilterBox;
     @FXML
@@ -58,46 +57,53 @@ public class ProductCatalogController {
     }
 
     private void buildProductCard(Product product) {
-        // the card itself, has header, subheader, body, and footer sections
-        Card card = new Card();
-        card.getStyleClass().add(Styles.ELEVATED_1);
-        card.setMinWidth(250);
-        card.setMaxWidth(300);
+        VBox card = new VBox(15);
+        card.getStyleClass().add("product-card");
+        card.setMinWidth(220);
+        card.setMaxWidth(220);
+        card.setAlignment(Pos.TOP_CENTER);
+
         // image
         ImageView imgView = new ImageView();
-        imgView.setFitWidth(250);
-        imgView.setFitHeight(180);
+        imgView.setFitWidth(180);
+        imgView.setFitHeight(130);
         imgView.setPreserveRatio(true);
         imgView.setSmooth(true);
-        imgView.setStyle("-fx-background-color: transparent;");
         ImageLoader.loadProductImage(imgView, product.getImageUrl());
-        // wrap image in a container to apply rounded corners for the header
+
         StackPane imageContainer = new StackPane(imgView);
-        imageContainer.setMinHeight(180);
-        imageContainer.setMaxHeight(180);
-        imageContainer.setStyle("-fx-background-color: #f5f5f5;" + "-fx-background-radius: 8 8 8 8;");
+        imageContainer.setMinHeight(150);
+        imageContainer.setStyle("-fx-background-color: #1c1c1e; -fx-background-radius: 10;");
         StackPane.setAlignment(imgView, Pos.CENTER);
-        card.setHeader(imageContainer); // sets the image as the header of the card
-        // title and category for subheader
-        Tile title = new Tile(product.getName(), product.getCategory());
-        title.setPadding(new Insets(20, 0, 0, 0));
-        card.setSubHeader(title); // sets the title and category as the subheader of the card
-        // rating and brand for body
-        VBox body = new VBox(5);
-        Text rating = new Text(
-                product.getRating() > 0 ? String.format("%.1f ★", product.getRating()) : "No ratings");
-        Text brand = new Text(product.getBrand());
-        body.getChildren().add(rating);
-        body.getChildren().add(brand);
-        card.setBody(body); // sets the rating and brand as the body of the card
-        // price and add to cart button for footer
-        Tile footer = new Tile(String.format("$%.2f", product.getPrice()), null);
+
+        VBox info = new VBox(5);
+        info.setAlignment(Pos.CENTER_LEFT);
+
+        Label name = new Label(product.getName());
+        name.setStyle("-fx-font-weight: bold; -fx-font-size: 15;");
+        name.setWrapText(true);
+
+        Label brand = new Label(product.getBrand());
+        brand.setStyle("-fx-text-fill: -brand-text-dim; -fx-font-size: 12;");
+
+        HBox priceBox = new HBox();
+        priceBox.setAlignment(Pos.CENTER_LEFT);
+        Label price = new Label(String.format("$%.2f", product.getPrice()));
+        price.setStyle("-fx-font-weight: 900; -fx-font-size: 16; -fx-text-fill: -brand-primary;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
         Button addToCart = new Button("Add");
+        addToCart.getStyleClass().add("btn-brand");
         addToCart.setOnAction(e -> {
             CartService.getInstance().addItem(product.getId(), 1);
         });
-        footer.setAction(addToCart);
-        card.setFooter(footer); // sets the price and add to cart button as the footer of the card
+
+        priceBox.getChildren().addAll(price, spacer, addToCart);
+        info.getChildren().addAll(name, brand, priceBox);
+
+        card.getChildren().addAll(imageContainer, info);
         productGrid.getChildren().add(card);
     }
 
@@ -168,7 +174,8 @@ public class ProductCatalogController {
     }
 
     private void updatePriceLabel() {
-        priceLabel.setText(String.format("$%.0f — $%.0f", minPriceSlider.getValue(), maxPriceSlider.getValue()));
+        priceLabelMin.setText(String.format("$%.0f", minPriceSlider.getValue()));
+        priceLabelMax.setText(String.format("$%.0f", maxPriceSlider.getValue()));
     }
 
     @FXML
