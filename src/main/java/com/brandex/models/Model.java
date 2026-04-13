@@ -2,6 +2,7 @@ package com.brandex.models;
 
 import java.time.OffsetDateTime;
 
+// The ADT Model, which is the base class for all models.
 public class Model {
     private String id;
     private OffsetDateTime createdAt;

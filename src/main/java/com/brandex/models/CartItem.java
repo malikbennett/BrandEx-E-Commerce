@@ -1,6 +1,7 @@
 
 package com.brandex.models;
 
+// The ADT CartItem, which extends the ADT Model.
 public class CartItem extends Model {
     private String cartId;
     private String productId;

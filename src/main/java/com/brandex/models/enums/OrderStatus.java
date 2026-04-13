@@ -1,5 +1,6 @@
 package com.brandex.models.enums;
 
+// The ADT OrderStatus, which is an enum.
 public enum OrderStatus {
     PENDING("Pending"),
     PROCESSING("Processing"),

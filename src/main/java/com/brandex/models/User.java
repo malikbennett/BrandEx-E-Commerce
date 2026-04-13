@@ -2,6 +2,7 @@ package com.brandex.models;
 
 import com.brandex.models.enums.UserStatus;
 
+// The ADT User, which extends the ADT Model.
 public class User extends Model {
     private String username, email, firstName, lastName, role, phoneNumber, shippingAddress, profileImgURL;
     private UserStatus status;
@@ -26,6 +27,10 @@ public class User extends Model {
 
     public String getLastName() {
         return this.lastName;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 
     public UserStatus getStatus() {

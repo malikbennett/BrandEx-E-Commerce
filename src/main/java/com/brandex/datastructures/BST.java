@@ -4,10 +4,12 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+// The ADT BST, implemented using our ADT Node.
 public class BST<T> {
     private Node<T> root = null; // starting point of the tree
     private Comparator<T> comparator;
 
+    // Inserts a node into the tree.
     private Node<T> insertRecursive(Node<T> node, T data) {
         if (data == null)
             return node;
@@ -23,6 +25,7 @@ public class BST<T> {
         return node;
     }
 
+    // Searches for a node in the tree.
     private T searchRecursive(Node<T> node, String key, Function<T, String> keyExtractor) {
         // samething here if the node is null, then thier is no children node to search,
         // or better say the previous node is a leaf node
@@ -48,6 +51,7 @@ public class BST<T> {
         }
     }
 
+    // Removes a node from the tree.
     private Node<T> removeRecursive(Node<T> node, T data) {
         if (node == null || data == null)
             return node; // same logic, the previous node was a leaf node so we can just remove its
@@ -84,12 +88,14 @@ public class BST<T> {
         return node;
     }
 
+    // Returns the minimum value in the tree.
     private Node<T> getMin(Node<T> node) {
         while (node.getLeft() != null) // Keeps going left until it cant anymore
             node = node.getLeft();
         return node;
     }
 
+    // Traverses the tree in-order.
     private void inOrderRecursive(Node<T> node, Consumer<T> action) {
         if (node == null) // Same logic
             return;
@@ -98,6 +104,7 @@ public class BST<T> {
         inOrderRecursive(node.getRight(), action); // then right
     }
 
+    // Traverses the tree pre-order.
     private void preOrderRecursive(Node<T> node, Consumer<T> action) {
         if (node == null) // Same logic
             return;
@@ -106,6 +113,7 @@ public class BST<T> {
         preOrderRecursive(node.getRight(), action); // then right
     }
 
+    // Traverses the tree post-order.
     private void postOrderRecursive(Node<T> node, Consumer<T> action) {
         if (node == null) // Same logic
             return;
@@ -114,6 +122,7 @@ public class BST<T> {
         action.accept(node.getData()); // root last
     }
 
+    // Returns the nodes in the range.
     private void getRangeRecursive(Node<T> node, T min, T max, Consumer<T> action) {
         if (node == null) // Same logic
             return;
@@ -135,18 +144,22 @@ public class BST<T> {
         }
     }
 
+    // Constructor that takes a comparator.
     public BST(Comparator<T> comparator) {
         this.comparator = comparator;
     }
 
+    // Inserts a node into the tree.
     public void insert(T data) {
         this.root = insertRecursive(this.root, data);
     }
 
+    // Searches for a node in the tree.
     public T search(String key, Function<T, String> keyExtractor) {
         return searchRecursive(this.root, key, keyExtractor);
     }
 
+    // Removes a node from the tree.
     public void remove(T data) {
         this.root = removeRecursive(this.root, data);
     }
@@ -171,14 +184,17 @@ public class BST<T> {
         getRangeRecursive(root, min, max, action);
     }
 
+    // Traverses the tree in-order.
     public void traverse(Consumer<T> action) {
         inOrder(action);
     }
 
+    // Returns true if the tree is empty, false otherwise.
     public boolean isEmpty() {
         return root == null;
     }
 
+    // Clears the tree.
     public void clear() {
         root = null;
     }

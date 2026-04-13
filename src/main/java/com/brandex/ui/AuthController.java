@@ -1,9 +1,8 @@
 package com.brandex.ui;
 
 import com.brandex.service.AuthService;
-import com.brandex.utilities.EmailSender;
 import com.brandex.utilities.InputValidator;
-import com.brandex.utilities.ThrowError;
+import com.brandex.utilities.StatusLabelHelper;
 import com.brandex.models.User;
 import com.brandex.App;
 import javafx.fxml.FXML;
@@ -11,15 +10,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 
+// The controller class for handling authentication.
 public class AuthController {
-    // Login fields
     @FXML
     private TextField loginEmailField;
     @FXML
     private PasswordField loginPasswordField;
     @FXML
     private Label loginErrorLabel;
-    // Registration fields
     @FXML
     private TextField registerEmailField;
     @FXML
@@ -30,12 +28,10 @@ public class AuthController {
     private TextField usernameField;
     @FXML
     private Label registerErrorLabel;
-    // OTP verification field
     @FXML
     private TextField otpField;
     @FXML
     private Label otpErrorLabel;
-    // Change password fields
     @FXML
     private PasswordField currentPasswordField;
     @FXML
@@ -44,9 +40,10 @@ public class AuthController {
     private PasswordField confirmPasswordField;
     @FXML
     private Label changePasswordErrorLabel;
-    // AuthService instance for handling authentication logic
     private final AuthService authService = AuthService.getInstance();
 
+    // Handles user login, verifies credentials, and navigates to the appropriate
+    // screen
     @FXML
     private void handleLogin() {
 
@@ -56,14 +53,18 @@ public class AuthController {
         try {
             User user = authService.login(email, password);
 
-            if (user.isForcePwChange()) {
+            if (!user.isOtpUsed()) {
+                App.setRoot("auth/OTPVerify");
+            } else if (user.isForcePwChange()) {
                 App.setRoot("auth/ChangePassword");
             } else {
                 App.setRoot("store/Dashboard");
             }
 
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(loginErrorLabel, "Database connection failed. Please try again later.");
         } catch (Exception e) {
-            ThrowError.errorLabel(loginErrorLabel, e.getMessage());
+            StatusLabelHelper.showError(loginErrorLabel, e.getMessage());
         }
     }
 
@@ -79,12 +80,12 @@ public class AuthController {
 
         // Basic input validation for empty fields and email format
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            ThrowError.errorLabel(registerErrorLabel, "Please fill in all fields.");
+            StatusLabelHelper.showError(registerErrorLabel, "Please fill in all fields.");
             return;
         }
         // Added email format validation using InputValidator utility class
         if (!InputValidator.isValidEmail(email)) {
-            ThrowError.errorLabel(registerErrorLabel, "Please enter a valid email address.");
+            StatusLabelHelper.showError(registerErrorLabel, "Please enter a valid email address.");
             return;
         }
         try {
@@ -92,8 +93,10 @@ public class AuthController {
             authService.register(firstName, lastName, email, username);
             // Navigate to OTP verification screen
             App.setRoot("auth/OTPVerify");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(registerErrorLabel, "Database connection failed. Please try again later.");
         } catch (Exception e) {
-            ThrowError.errorLabel(registerErrorLabel, e.getMessage());
+            StatusLabelHelper.showError(registerErrorLabel, e.getMessage());
         }
     }
 
@@ -108,8 +111,26 @@ public class AuthController {
         try {
             authService.verifyOtp(username, otp);
             App.setRoot("auth/ChangePassword");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(otpErrorLabel, "Database connection failed. Please try again later.");
         } catch (Exception e) {
-            ThrowError.errorLabel(otpErrorLabel, e.getMessage());
+            StatusLabelHelper.showError(otpErrorLabel, e.getMessage());
+        }
+    }
+
+    // Resends the OTP to the user
+    @FXML
+    private void handleResendOtp() {
+        if (authService.getCurrentUser() == null)
+            return;
+        String username = authService.getCurrentUser().getUsername();
+        try {
+            authService.resendOtp(username);
+            StatusLabelHelper.showSuccess(otpErrorLabel, "A new OTP has been sent to your email.");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(otpErrorLabel, "Database connection failed.");
+        } catch (Exception e) {
+            StatusLabelHelper.showError(otpErrorLabel, e.getMessage());
         }
     }
 
@@ -127,15 +148,13 @@ public class AuthController {
             if (!newPassword.equals(confirmPassword)) {
                 throw new Exception("New password and confirmation do not match.");
             }
+            System.out.println(username);
             authService.changePassword(username, currentPassword, newPassword);
             App.setRoot("store/Dashboard");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(changePasswordErrorLabel, "Database connection failed.");
         } catch (Exception e) {
-            ThrowError.errorLabel(changePasswordErrorLabel, e.getMessage());
+            StatusLabelHelper.showError(changePasswordErrorLabel, e.getMessage());
         }
-    }
-
-    @FXML
-    private void initialize() {
-
     }
 }

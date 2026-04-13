@@ -1,5 +1,6 @@
 package com.brandex.models.enums;
 
+// The ADT UserStatus, which is an enum.
 public enum UserStatus {
     ACTIVE("Active"),
     PENDING("Pending"),

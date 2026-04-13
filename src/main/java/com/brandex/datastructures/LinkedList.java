@@ -4,15 +4,18 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+// The ADT LinkedList, implemented using our ADT Node.
 public class LinkedList<T> {
     private Node<T> head = null; // starting point of list
     private Node<T> tail = null; // points the last element in the list
     private Comparator<T> comparator;
 
+    // Constructor that takes a comparator.
     public LinkedList(Comparator<T> comparator) {
         this.comparator = comparator;
     }
 
+    // Inserts an element into the list.
     public void insert(T data) {
         if (data == null)
             return;
@@ -27,6 +30,7 @@ public class LinkedList<T> {
         }
     }
 
+    // Removes an element from the list.
     public void remove(T data) {
         if (this.head == null || data == null)
             return;
@@ -53,6 +57,7 @@ public class LinkedList<T> {
         }
     }
 
+    // Searches for an element in the list.
     public T search(String key, Function<T, String> keyExtractor) {
         if (key == null)
             return null;
@@ -66,6 +71,7 @@ public class LinkedList<T> {
         return null;
     }
 
+    // Traverses the list.
     public void traverse(Consumer<T> action) {
         Node<T> current = this.head;
         while (current != null) {
@@ -74,6 +80,7 @@ public class LinkedList<T> {
         }
     }
 
+    // Removes and returns the tail of the list.
     public T removeTail() {
         if (this.tail == null)
             return null;
@@ -87,18 +94,22 @@ public class LinkedList<T> {
         return Data;
     }
 
+    // Returns the tail of the list.
     public Node<T> getTail() {
         return this.tail;
     }
 
+    // Returns the head of the list.
     public Node<T> getHead() {
         return this.head;
     }
 
+    // Returns true if the list is empty, false otherwise.
     public boolean isEmpty() {
         return (this.head == null && this.tail == null);
     }
 
+    // Clears the list.
     public void clear() {
         this.head = null;
         this.tail = null;

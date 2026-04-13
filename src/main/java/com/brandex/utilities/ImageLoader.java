@@ -4,13 +4,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.InputStream;
 
-/**
- * Utility class for loading images with automatic fallback handling.
- */
+// Utility class for loading images with automatic fallback handling.
+// class was created with the assistance of an AI language model.
 public class ImageLoader {
 
     private static final String DEFAULT_IMAGE_PATH = "/com/brandex/images/no_image.png";
 
+    // Loads an image into an ImageView.
     public static void load(ImageView imageView, String path) {
         if (path == null || path.trim().isEmpty()) {
             loadDefaultImage(imageView);
@@ -38,6 +38,7 @@ public class ImageLoader {
         }
     }
 
+    // Loads a product image into an ImageView.
     public static void loadProductImage(ImageView imageView, String imageName) {
         if (imageName == null || imageName.trim().isEmpty()) {
             loadDefaultImage(imageView);
@@ -47,6 +48,7 @@ public class ImageLoader {
         load(imageView, fullUrl);
     }
 
+    // Loads the default image into an ImageView.
     public static void loadDefaultImage(ImageView imageView) {
         try {
             InputStream is = ImageLoader.class.getResourceAsStream(DEFAULT_IMAGE_PATH);

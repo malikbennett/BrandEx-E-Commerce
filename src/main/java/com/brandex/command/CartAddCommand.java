@@ -8,6 +8,7 @@ import com.brandex.repository.CartRepository;
 import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
+// The command class for adding an item to the cart.
 public class CartAddCommand implements Command {
     private final LinkedList<CartItem> cartList;
     private final Cart cart;
@@ -17,6 +18,7 @@ public class CartAddCommand implements Command {
     private int previousQuantity = 0;
     private boolean isNewItem = false;
 
+    // Constructor for the CartAddCommand class.
     public CartAddCommand(LinkedList<CartItem> cart, String productId, int quantity) {
         this.cartList = cart;
         this.productId = productId;
@@ -24,6 +26,7 @@ public class CartAddCommand implements Command {
         this.cart = CartService.getInstance().getCurrentCart();
     }
 
+    // Executes the command to add an item to the cart.
     @Override
     public void execute() {
         Product product = ProductService.getInstance().searchById(this.productId);
@@ -53,6 +56,7 @@ public class CartAddCommand implements Command {
         CartService.getInstance().syncCartTotalWithDatabase();
     }
 
+    // Undoes the command to add an item to the cart.
     @Override
     public void undo() {
         // find the item that was added

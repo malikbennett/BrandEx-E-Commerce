@@ -3,6 +3,7 @@ package com.brandex.models;
 import com.brandex.models.enums.OrderStatus;
 import com.brandex.models.enums.PaymentMethod;
 
+// The ADT Order, which extends the ADT Model.
 public class Order extends Model {
     private String userId;
     private String orderNumber;

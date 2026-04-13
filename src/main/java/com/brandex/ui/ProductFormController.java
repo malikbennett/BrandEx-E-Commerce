@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+// The controller class for handling the product form view.
 public class ProductFormController {
 
     @FXML
@@ -35,6 +36,7 @@ public class ProductFormController {
     private final ProductService productService = ProductService.getInstance();
     private boolean saved = false;
 
+    // Sets the product to be edited
     public void setProduct(Product product) {
         this.product = product;
         if (product != null) {
@@ -54,6 +56,7 @@ public class ProductFormController {
         }
     }
 
+    // Handles saving the product
     @FXML
     private void handleSave() {
         if (!validateInputs()) {
@@ -77,15 +80,18 @@ public class ProductFormController {
         }
     }
 
+    // Handles cancelling the product form
     @FXML
     private void handleCancel() {
         closeStage();
     }
 
+    // Returns true if the product was saved
     public boolean isSaved() {
         return saved;
     }
 
+    // Validates the inputs
     private boolean validateInputs() {
         StringBuilder errors = new StringBuilder();
 
@@ -95,14 +101,16 @@ public class ProductFormController {
 
         try {
             double price = Double.parseDouble(priceField.getText().trim());
-            if (price < 0) errors.append("- Price must be non-negative.\n");
+            if (price < 0)
+                errors.append("- Price must be non-negative.\n");
         } catch (NumberFormatException e) {
             errors.append("- Price must be a valid number.\n");
         }
 
         try {
             int stock = Integer.parseInt(stockField.getText().trim());
-            if (stock < 0) errors.append("- Stock must be non-negative.\n");
+            if (stock < 0)
+                errors.append("- Stock must be non-negative.\n");
         } catch (NumberFormatException e) {
             errors.append("- Stock must be a valid whole number.\n");
         }
@@ -110,19 +118,22 @@ public class ProductFormController {
         if (!ratingField.getText().isBlank()) {
             try {
                 double rating = Double.parseDouble(ratingField.getText().trim());
-                if (rating < 0 || rating > 5) errors.append("- Rating must be between 0 and 5.\n");
+                if (rating < 0 || rating > 5)
+                    errors.append("- Rating must be between 0 and 5.\n");
             } catch (NumberFormatException e) {
                 errors.append("- Rating must be a valid number.\n");
             }
         }
 
         if (errors.length() > 0) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please correct the following errors:\n" + errors.toString());
+            showAlert(Alert.AlertType.WARNING, "Validation Error",
+                    "Please correct the following errors:\n" + errors.toString());
             return false;
         }
         return true;
     }
 
+    // Applies the form to the product
     private void applyFormToProduct() {
         product.setName(nameField.getText().trim());
         product.setBrand(emptyToNull(brandField.getText()));
@@ -134,11 +145,13 @@ public class ProductFormController {
         product.setDescription(emptyToNull(descriptionField.getText()));
     }
 
+    // Closes the stage
     private void closeStage() {
         Stage stage = (Stage) productInfoLabel.getScene().getWindow();
         stage.close();
     }
 
+    // Shows an alert
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -147,11 +160,13 @@ public class ProductFormController {
         alert.showAndWait();
     }
 
-    private String nullSafe(String s) {
-        return (s == null) ? "" : s;
+    // Returns an empty string if the string is null
+    private String nullSafe(String string) {
+        return (string == null) ? "" : string;
     }
 
-    private String emptyToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s.trim();
+    // Returns null if the string is null or blank
+    private String emptyToNull(String string) {
+        return (string == null || string.isBlank()) ? null : string.trim();
     }
 }

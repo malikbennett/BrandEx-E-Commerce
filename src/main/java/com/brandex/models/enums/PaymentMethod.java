@@ -1,5 +1,6 @@
 package com.brandex.models.enums;
 
+// The ADT PaymentMethod, which is an enum.
 public enum PaymentMethod {
     CREDIT_CARD("Credit Card"),
     DEBIT_CARD("Debit Card"),

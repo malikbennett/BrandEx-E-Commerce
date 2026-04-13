@@ -3,6 +3,8 @@ package com.brandex.ui;
 import java.time.format.DateTimeFormatter;
 
 import com.brandex.models.Product;
+import com.brandex.models.User;
+import com.brandex.service.AuthService;
 import com.brandex.service.ProductService;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -17,6 +19,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+// The controller class for handling the manage products view.
 public class ManageProductsController {
 
     @FXML
@@ -43,20 +46,32 @@ public class ManageProductsController {
     private TableColumn<Product, String> dateCreatedColumn;
     @FXML
     private TableColumn<Product, Void> actionsColumn;
+    @FXML
+    private javafx.scene.control.TextField searchField;
 
     @FXML
     private Button addProductBtn;
 
+    private final ObservableList<Product> allProducts = FXCollections.observableArrayList();
     private final ProductService productService = ProductService.getInstance();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
+    // Initializes the manage products view
     @FXML
     public void initialize() {
-        System.out.println("ManageProductsController initialized");
+        User currentUser = AuthService.getInstance().getCurrentUser();
+        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
+            productsTable.setDisable(true);
+            addProductBtn.setDisable(true);
+            return;
+        }
+
         setupTable();
         loadProducts();
+        setupSearch();
     }
 
+    // Sets up the table
     private void setupTable() {
         idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId()));
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
@@ -81,6 +96,7 @@ public class ManageProductsController {
         setupActionsColumn();
     }
 
+    // Sets up the actions column
     private void setupActionsColumn() {
         actionsColumn.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button("Edit");
@@ -115,25 +131,49 @@ public class ManageProductsController {
         });
     }
 
+    // Loads the products
     private void loadProducts() {
-        if (productService.getProductsTree().isEmpty()) {
+        if (!productService.isLoaded())
             productService.loadProducts();
-        }
 
-        ObservableList<Product> products = FXCollections.observableArrayList();
-        productService.forEachProduct(products::add);
-        productsTable.setItems(products);
+        allProducts.clear();
+        productService.forEachProduct(product -> this.allProducts.add(product));
+        productsTable.setItems(allProducts);
     }
 
+    // Sets up the search
+    private void setupSearch() {
+        searchField.textProperty().addListener((obs, old, val) -> {
+            if (val == null || val.isBlank()) {
+                productsTable.setItems(allProducts);
+                return;
+            }
+            String query = val.toLowerCase();
+            ObservableList<Product> filtered = FXCollections.observableArrayList();
+            for (Product product : allProducts) {
+                if (product.getName().toLowerCase().contains(query)
+                        || product.getBrand().toLowerCase().contains(query)
+                        || product.getCategory().toLowerCase().contains(query)
+                        || product.getId().toLowerCase().contains(query)) {
+                    filtered.add(product);
+                }
+            }
+            productsTable.setItems(filtered);
+        });
+    }
+
+    // Handles adding a product
     @FXML
     private void handleAddProduct() {
         showProductForm(null);
     }
 
+    // Handles editing a product
     private void handleEditProduct(Product product) {
         showProductForm(product);
     }
 
+    // Shows the product form
     private void showProductForm(Product product) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/brandex/fxml/admin/ProductForm.fxml"));
@@ -161,6 +201,7 @@ public class ManageProductsController {
         }
     }
 
+    // Handles deleting a product
     private void handleDelete(Product product) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Delete");
@@ -179,5 +220,13 @@ public class ManageProductsController {
                 error.showAndWait();
             }
         }
+    }
+
+    // Handles refreshing the products
+    @FXML
+    private void handleRefresh() {
+        productService.reloadProducts();
+        loadProducts();
+        searchField.clear(); // Clear search on explicit refresh
     }
 }
