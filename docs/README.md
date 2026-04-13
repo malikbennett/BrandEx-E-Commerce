@@ -1,7 +1,7 @@
 # BrandEx E-Commerce Platform
 
 > [!IMPORTANT]
-> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [AI Disclosure.pdf](<AI Disclosure.pdf>).
+> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [AI Disclosure.pdf](AI Disclosure.pdf).
 
 A full-featured desktop E-Commerce application built with **JavaFX** and **PostgreSQL**, engineered with custom data structures and design patterns.
 
@@ -278,8 +278,11 @@ mvn clean javafx:run
 
 **Option 2 — Via the Windows Installer (End Users)**
 1. Download the `BrandEx-1.0.exe` from the [Releases](https://github.com/malikbennett/BrandEx-E-Commerce/releases) page.
-2. Run the installer and follow the prompts.
-3. Launch **BrandEx** from the Desktop or Start Menu shortcut.
+2. Run the installer.
+   > [!NOTE]
+   > **Security Note:** Because this is an educational project, the installer is not digitally signed. You may see a Windows SmartScreen warning stating "Windows protected your PC." To proceed, click **"More info"** and then **"Run anyway"**.
+3. Follow the prompts to complete installation.
+4. Launch **BrandEx** from the Desktop or Start Menu shortcut.
 
 ---
 
