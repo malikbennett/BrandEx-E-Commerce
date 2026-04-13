@@ -1,7 +1,7 @@
 # BrandEx E-Commerce Platform
 
 > [!IMPORTANT]
-> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [docs/AI Disclosure](docs/\AI Disclosure.png\).
+> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [docs/AI Disclosure](docs/AI Disclosure.png).
 
 A full-featured desktop E-Commerce application built with **JavaFX** and **PostgreSQL**, engineered with custom data structures and design patterns.
 
