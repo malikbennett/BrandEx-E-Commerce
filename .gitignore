@@ -1,8 +1,7 @@
 # ===========================
 # Credentials
 # ===========================
-# Normally we would not commit credentials to version control, but since this is a test project, we can commit them
-# /src/main/resources/com/brandex/config.properties
+/src/main/resources/com/brandex/config.properties
 
 # ===========================
 # Maven build output

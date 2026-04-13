@@ -12,15 +12,15 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane minHeight="-Infinity" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.ProductCatalogController">
+<StackPane minHeight="0.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brandex.ui.ProductCatalogController">
    <children>
       <HBox spacing="30.0">
          <children>
-            <VBox HBox.hgrow="ALWAYS">
+            <VBox fillWidth="true" HBox.hgrow="ALWAYS">
                <children>
-                  <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="0.0" style="-fx-background-color: transparent;" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
                      <content>
-                        <TilePane fx:id="productGrid" hgap="16.0" vgap="16.0">
+                        <TilePane fx:id="productGrid" alignment="TOP_LEFT" hgap="16.0" vgap="16.0">
                            <padding>
                               <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -29,65 +29,73 @@
                   </ScrollPane>
                </children>
             </VBox>
-            <VBox maxWidth="280.0" minWidth="280.0" spacing="20.0" styleClass="card-premium">
+            <VBox maxHeight="850.0" minWidth="280.0" prefWidth="280.0" styleClass="card-premium">
                <children>
-                  <HBox alignment="CENTER_LEFT">
-                     <children>
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 18;" text="Filters" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#handleRefresh" styleClass="btn-secondary" text="Reload" />
-                     </children>
-                  </HBox>
-                  <Separator opacity="0.1" />
-                  <VBox spacing="10.0">
-                     <children>
-                        <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="PRICE RANGE" />
-                        <VBox spacing="15.0">
+                  <ScrollPane fitToWidth="true" minHeight="0.0" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox spacing="20.0">
                            <children>
-                              <VBox spacing="5.0">
+                              <HBox alignment="CENTER_LEFT">
                                  <children>
-                                    <HBox alignment="CENTER_LEFT">
+                                    <Label style="-fx-font-weight: bold; -fx-font-size: 18;" text="Filters" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#handleRefresh" styleClass="btn-secondary" text="Reload" />
+                                 </children>
+                              </HBox>
+                              <Separator opacity="0.1" />
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="PRICE RANGE" />
+                                    <VBox spacing="15.0">
                                        <children>
-                                          <Label style="-fx-font-size: 11;" text="Min" />
-                                          <Region HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="priceLabelMin" style="-fx-font-size: 11; -fx-font-weight: bold;" text="\$0" />
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <Label style="-fx-font-size: 11;" text="Min" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Label fx:id="priceLabelMin" style="-fx-font-size: 11; -fx-font-weight: bold;" text="\$0" />
+                                                   </children>
+                                                </HBox>
+                                                <Slider fx:id="minPriceSlider" max="10000.0" />
+                                             </children>
+                                          </VBox>
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <Label style="-fx-font-size: 11;" text="Max" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Label fx:id="priceLabelMax" style="-fx-font-size: 11; -fx-font-weight: bold;" text="\$10000" />
+                                                   </children>
+                                                </HBox>
+                                                <Slider fx:id="maxPriceSlider" max="10000.0" value="10000.0" />
+                                             </children>
+                                          </VBox>
                                        </children>
-                                    </HBox>
-                                    <Slider fx:id="minPriceSlider" max="10000.0" />
+                                    </VBox>
                                  </children>
                               </VBox>
-                              <VBox spacing="5.0">
+                              <VBox fx:id="categoryFilterBox" spacing="10.0">
                                  <children>
-                                    <HBox alignment="CENTER_LEFT">
-                                       <children>
-                                          <Label style="-fx-font-size: 11;" text="Max" />
-                                          <Region HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="priceLabelMax" style="-fx-font-size: 11; -fx-font-weight: bold;" text="\$10000" />
-                                       </children>
-                                    </HBox>
-                                    <Slider fx:id="maxPriceSlider" max="10000.0" value="10000.0" />
+                                    <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="CATEGORIES" />
+                                    <VBox fx:id="categoryCheckboxBox" spacing="8.0" />
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="brandFilterBox" spacing="10.0">
+                                 <children>
+                                    <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="BRANDS" />
+                                    <VBox fx:id="brandCheckboxBox" spacing="8.0" />
                                  </children>
                               </VBox>
                            </children>
+                           <padding>
+                              <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+                           </padding>
                         </VBox>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="categoryFilterBox" spacing="10.0">
-                     <children>
-                        <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="CATEGORIES" />
-                        <VBox fx:id="categoryCheckboxBox" spacing="8.0" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="brandFilterBox" spacing="10.0">
-                     <children>
-                        <Label style="-fx-text-fill: -brand-text-dim; -fx-font-size: 13;" text="BRANDS" />
-                        <VBox fx:id="brandCheckboxBox" spacing="8.0" />
-                     </children>
-                  </VBox>
+                     </content>
+                  </ScrollPane>
                </children>
-               <padding>
-                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-               </padding>
             </VBox>
          </children>
       </HBox>

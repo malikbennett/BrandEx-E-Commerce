@@ -38,8 +38,9 @@ public class CartService {
     // Load the users cart from database
     public void loadCart() {
         this.currentCart = cartRepo.getCart("user_id", AuthService.getInstance().getCurrentUser().getId());
-        if (this.currentCart == null)
-            throw new IllegalArgumentException("Cart not found for user.");
+        if (this.currentCart == null) {
+            createCart(AuthService.getInstance().getCurrentUser().getId());
+        }
         this.cartRepo.listCartItems(this.currentCart.getId()).traverse(cartItem -> {
             this.cartList.insert(cartItem);
         });
@@ -64,9 +65,9 @@ public class CartService {
     }
 
     // Create a cart for user on load
-    public void createCart() {
+    public void createCart(String userId) {
         Cart cart = new Cart();
-        cart.setUserId(AuthService.getInstance().getCurrentUser().getId());
+        cart.setUserId(userId);
         this.cartRepo.createCart(cart);
     }
 

@@ -67,20 +67,20 @@ public class AuthService {
         user.setForcePwChange(true);
         user.setRole("customer");
 
+        this.currentUser = user;
+
         if (user.getId() == null) {
             // New user
             String userId = this.userRepo.createUser(user);
             if (userId == null)
                 throw new Exception("Failed to register user.");
             user.setId(userId);
-            CartService.getInstance().createCart();
+            CartService.getInstance().createCart(user.getId());
         } else {
             // Updating orphaned user
             this.userRepo.updateUser(user);
             this.userRepo.updateOtp(user.getId(), otpHash);
         }
-
-        this.currentUser = user;
 
         // Send the welcome email asynchronously with retries
         EmailSender.sendAsync(
