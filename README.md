@@ -7,7 +7,7 @@ A full-featured desktop E-Commerce application built with **JavaFX** and **Postg
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 1. [Project Overview](#-project-overview)
 2. [Technical Architecture](#-technical-architecture)
@@ -35,7 +35,7 @@ A full-featured desktop E-Commerce application built with **JavaFX** and **Postg
 
 ---
 
-## 🏬 Project Overview
+## Project Overview
 
 BrandEx is a desktop-based E-Commerce platform for browsing, purchasing, and managing products. It provides two distinct experiences:
 
@@ -44,7 +44,7 @@ BrandEx is a desktop-based E-Commerce platform for browsing, purchasing, and man
 
 ---
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### Stack
 
@@ -137,7 +137,7 @@ com.brandex/
 
 ---
 
-## 💻 System Requirements
+## System Requirements
 
 ### End User (Running the Installer)
 - **OS**: Windows 10 or later (64-bit)
@@ -153,7 +153,7 @@ com.brandex/
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 ### Database Setup
 
@@ -315,7 +315,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 
 ---
 
-## 👤 Customer Features
+## Customer Features
 
 ### Account Management
 
@@ -418,7 +418,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 
 ---
 
-## 🔧 Admin Features
+## Admin Features
 
 Admin accounts have access to an extended navigation bar with management tools. Admin access is determined by the `role` field on the user account.
 
@@ -502,7 +502,7 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 
 ---
 
-## 📊 UML Diagrams
+## UML Diagrams
 
 > **Note:** The diagrams below are placeholders. Replace each image path with your actual exported diagram image file.
 
@@ -576,7 +576,7 @@ e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
 
 ---
 
-## ❓ FAQs & Troubleshooting
+## FAQs & Troubleshooting
 
 ### General FAQs
 
@@ -607,7 +607,7 @@ e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
 
 ---
 
-## ⚠️ Known Issues & Limitations
+## Known Issues & Limitations
 
 - The application currently targets **Windows only** for the packaged installer.
 
