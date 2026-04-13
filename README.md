@@ -508,164 +508,31 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 
 ### Use Case Diagram
 
-> *Illustrates the interactions between system actors (Customer, Admin) and the available use cases.*
+The Use Case Diagram illustrates the interactions between system actors (Customer, Admin) and the available system features.
 
-```mermaid
-useCaseDiagram
-    actor "Guest" as G
-    actor "Customer" as C
-    actor "Administrator" as A
+![Use Case Diagram](docs/diagrams/use-case.png)
 
-    package "BrandEx System" {
-        usecase "Register/Login" as UC1
-        usecase "Browse/Search Products" as UC2
-        usecase "Manage Cart (Undo/Redo)" as UC3
-        usecase "Checkout & Place Order" as UC4
-        usecase "View Order History" as UC5
-        usecase "Manage Profile" as UC6
-        usecase "Add/Edit/Delete Products" as UC7
-        usecase "Manage Users & Reset PWD" as UC8
-        usecase "Process/Fulfill Orders" as UC9
-    }
-
-    G --> UC1
-    G --> UC2
-
-    C --> UC1
-    C --> UC2
-    C --> UC3
-    C --> UC4
-    C --> UC5
-    C --> UC6
-
-    A --> UC7
-    A --> UC8
-    A --> UC9
-    A --|> C : "Inherits Customer Features"
-```
-
-**Actors:**
-- **Guest** — Can view the login/register screen.
-- **Customer** — Can browse products, manage cart, place orders, and view their profile.
-- **Administrator** — Has all Customer capabilities plus product CRUD, user management, and order processing.
-
-**Key Use Cases:**
-- Register Account / Login / Logout
-- Browse & Search Products
-- Manage Cart (Add, Remove, Undo, Redo)
-- Checkout & Place Order
-- View Order History
-- [Admin] Add / Edit / Delete Products
-- [Admin] Edit / Reset / Delete Users
-- [Admin] Process Orders
+*   **Guest**: Can view the login/register screen.
+*   **Customer**: Can browse products, manage cart, place orders, and view their profile.
+*   **Administrator**: Has all Customer capabilities plus product CRUD, user management, and order processing.
 
 ---
 
 ### Class Diagram
 
-> *Illustrates the domain model and the relationships between key classes.*
+The Class Diagram illustrates the domain model, technical layers, and the relationships between key classes.
 
-```mermaid
-classDiagram
-    class User {
-        +String id
-        +String username
-        +String email
-        +String role
-    }
-    class Product {
-        +String id
-        +String name
-        +double price
-        +int stock
-    }
-    class Cart {
-        +String id
-        +String userId
-        +double totalPrice
-    }
-    class CartItem {
-        +String productId
-        +int quantity
-    }
-    class Order {
-        +String id
-        +String orderNumber
-        +String status
-    }
-
-    User "1" *-- "1" Cart : owns
-    Cart "1" *-- "*" CartItem : contains
-    CartItem "*" -- "1" Product : references
-    User "1" *-- "*" Order : places
-    Order "1" *-- "*" OrderItem : contains
-
-    class AuthService {
-        +login()
-        +register()
-        +verifyOtp()
-    }
-    class CartService {
-        +addItem()
-        +undo()
-        +redo()
-        +checkout()
-    }
-
-    AuthService ..> UserRepository : uses
-    CartService ..> CartRepository : uses
-    CartService ..> OrderService : triggers
-```
-
-**Key Relationships:**
-- `User` **1—1** `Cart` (one cart per user)
-- `Cart` **1—N** `CartItem` (a cart has many items)
-- `CartItem` **N—1** `Product` (each item references a product)
-- `User` **1—N** `Order` (a user can have many orders)
-- `Order` **1—N** `OrderItem`
-- `ProductService` **uses** `BST<Product>` for in-memory storage
-- `UserService` **uses** `BST<User>` for in-memory storage
-- `CartService` **uses** `LinkedList<CartItem>` and `Stack<Command>` for undo/redo
+**[View Full Detailed Class Diagram (PDF)](docs/diagrams/Class%20Diagram.pdf)**
 
 ---
 
-### Sequence Diagram
+### Sequence & Activity Diagrams
 
-> *Illustrates the flow of messages through the system for a key workflow.*
+Illustrates the flow of messages through the system and the core business logic for key workflows like Registration and Checkout.
 
-#### Suggested Workflow: Customer Registration & OTP Verification
+![Process Diagram](docs/diagrams/image.png)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant CC as CartController
-    participant CS as CartService
-    participant OR as OrderRepository
-    participant ES as EmailSender
-
-    User->>CC: Click "Place Order"
-    CC->>CS: checkout(address, payment)
-    CS->>OR: createOrder(orderData)
-    OR-->>CS: return orderID
-    loop For each item in Cart
-        CS->>OR: createOrderItem(details)
-    end
-    CS->>ES: sendConfirmationEmailAsync()
-    CS->>CS: clearCart()
-    CS-->>CC: "Success"
-    CC->>User: Show "Order Confirmed!"
-```
-
-**Flow:**
-1. User fills in the Register form → `AuthController`
-2. `AuthController` calls `AuthService.register()`
-3. `AuthService` checks `UserRepository` for existing email/username conflicts
-4. `AuthService` generates OTP via `OTPGenerator`
-5. OTP hash stored in DB via `UserRepository.createUser()`
-6. `EmailSender.send()` dispatches OTP to user's inbox
-7. User enters OTP → `AuthController` calls `AuthService.verifyOtp()`
-8. System marks OTP as used and redirects to `changePassword` flow
+---
 
 ---
 
@@ -690,5 +557,7 @@ sequenceDiagram
 
 ## 📬 Developers
 - [Malik Bennett](https://github.com/malikbennett)
-
+- [Ethan Dixon](https://github.com/powdem123)
+- [Dylan Lee-Sue](https://github.com/dLyn-Sue)
+- [Twyane Campbell](https://github.com/TwyaneCampbell)
 ---
