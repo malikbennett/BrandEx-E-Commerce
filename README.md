@@ -504,15 +504,44 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 
 ## UML Diagrams
 
-> **Note:** The diagrams below are placeholders. Replace each image path with your actual exported diagram image file.
+
 
 ### Use Case Diagram
 
 > *Illustrates the interactions between system actors (Customer, Admin) and the available use cases.*
 
-```
-[PLACEHOLDER: Insert Use Case Diagram image here]
-e.g., ![Use Case Diagram](docs/diagrams/use_case_diagram.png)
+```mermaid
+useCaseDiagram
+    actor "Guest" as G
+    actor "Customer" as C
+    actor "Administrator" as A
+
+    package "BrandEx System" {
+        usecase "Register/Login" as UC1
+        usecase "Browse/Search Products" as UC2
+        usecase "Manage Cart (Undo/Redo)" as UC3
+        usecase "Checkout & Place Order" as UC4
+        usecase "View Order History" as UC5
+        usecase "Manage Profile" as UC6
+        usecase "Add/Edit/Delete Products" as UC7
+        usecase "Manage Users & Reset PWD" as UC8
+        usecase "Process/Fulfill Orders" as UC9
+    }
+
+    G --> UC1
+    G --> UC2
+
+    C --> UC1
+    C --> UC2
+    C --> UC3
+    C --> UC4
+    C --> UC5
+    C --> UC6
+
+    A --> UC7
+    A --> UC8
+    A --> UC9
+    A --|> C : "Inherits Customer Features"
 ```
 
 **Actors:**
@@ -536,9 +565,56 @@ e.g., ![Use Case Diagram](docs/diagrams/use_case_diagram.png)
 
 > *Illustrates the domain model and the relationships between key classes.*
 
-```
-[PLACEHOLDER: Insert Class Diagram image here]
-e.g., ![Class Diagram](docs/diagrams/class_diagram.png)
+```mermaid
+classDiagram
+    class User {
+        +String id
+        +String username
+        +String email
+        +String role
+    }
+    class Product {
+        +String id
+        +String name
+        +double price
+        +int stock
+    }
+    class Cart {
+        +String id
+        +String userId
+        +double totalPrice
+    }
+    class CartItem {
+        +String productId
+        +int quantity
+    }
+    class Order {
+        +String id
+        +String orderNumber
+        +String status
+    }
+
+    User "1" *-- "1" Cart : owns
+    Cart "1" *-- "*" CartItem : contains
+    CartItem "*" -- "1" Product : references
+    User "1" *-- "*" Order : places
+    Order "1" *-- "*" OrderItem : contains
+
+    class AuthService {
+        +login()
+        +register()
+        +verifyOtp()
+    }
+    class CartService {
+        +addItem()
+        +undo()
+        +redo()
+        +checkout()
+    }
+
+    AuthService ..> UserRepository : uses
+    CartService ..> CartRepository : uses
+    CartService ..> OrderService : triggers
 ```
 
 **Key Relationships:**
@@ -559,9 +635,26 @@ e.g., ![Class Diagram](docs/diagrams/class_diagram.png)
 
 #### Suggested Workflow: Customer Registration & OTP Verification
 
-```
-[PLACEHOLDER: Insert Sequence Diagram image here]
-e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant CC as CartController
+    participant CS as CartService
+    participant OR as OrderRepository
+    participant ES as EmailSender
+
+    User->>CC: Click "Place Order"
+    CC->>CS: checkout(address, payment)
+    CS->>OR: createOrder(orderData)
+    OR-->>CS: return orderID
+    loop For each item in Cart
+        CS->>OR: createOrderItem(details)
+    end
+    CS->>ES: sendConfirmationEmailAsync()
+    CS->>CS: clearCart()
+    CS-->>CC: "Success"
+    CC->>User: Show "Order Confirmed!"
 ```
 
 **Flow:**
