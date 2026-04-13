@@ -576,24 +576,6 @@ e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
 
 ---
 
-## FAQs & Troubleshooting
-
-### General FAQs
-
-**Q: I didn't receive an OTP email after registering. What do I do?**
-> Check your Spam/Junk folder first. If it is not there, ensure your email address was entered correctly. If the problem persists, contact your system administrator.
-
-**Q: I forgot my password. How do I reset it?**
-> Contact your administrator. They can issue a system-generated temporary password which will be emailed to you. You will be required to change it upon your next login.
-
-**Q: Can I use BrandEx on Mac or Linux?**
-> The Windows `.exe` installer is Windows-only. However, developers can build and run the application from source on any platform that supports Java 25 and JavaFX.
-
-**Q: Is my data safe?**
-> All passwords are stored using **BCrypt hashing** — they are never stored in plain text. Communications with the database use **prepared statements** to prevent SQL injection.
-
----
-
 ### Common Setup Issues
 
 | Problem | Likely Cause | Solution |
@@ -613,10 +595,7 @@ e.g., ![Sequence Diagram](docs/diagrams/sequence_diagram_registration.png)
 
 ---
 
-## 📬 Contact & Support
-
-For bugs, feature requests, or questions:
-- **GitHub Issues**: [Open an Issue](https://github.com/malikbennett/BrandEx-E-Commerce/issues)
-- **Developer**: Malik Bennett
+## 📬 Developers
+- [Malik Bennett](https://github.com/malikbennett)
 
 ---
