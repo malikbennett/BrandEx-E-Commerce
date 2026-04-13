@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+// The controller class for handling the edit user dialog.
 public class EditUserDialogController {
 
     @FXML
@@ -25,6 +26,7 @@ public class EditUserDialogController {
     private final UserService userService = UserService.getInstance();
     private boolean saved = false;
 
+    // Sets the user to be edited
     public void setUser(User user) {
         this.user = user;
         userInfoLabel.setText(String.format("User: %s (%s)", user.getUsername(), user.getEmail()));
@@ -32,12 +34,14 @@ public class EditUserDialogController {
         roleComboBox.setValue(user.getRole().substring(0, 1).toUpperCase() + user.getRole().substring(1).toLowerCase());
     }
 
+    // Initializes the dialog
     @FXML
     public void initialize() {
         statusComboBox.getItems().setAll(UserStatus.values());
         roleComboBox.getItems().setAll("Admin", "Customer");
     }
 
+    // Saves the user
     @FXML
     private void handleSave() {
         try {
@@ -49,11 +53,13 @@ public class EditUserDialogController {
         }
     }
 
+    // Cancels the edit
     @FXML
     private void handleCancel() {
         closeStage();
     }
 
+    // Resets the user's password
     @FXML
     private void handleResetPassword() {
         try {
@@ -72,10 +78,12 @@ public class EditUserDialogController {
         }
     }
 
+    // Checks if the user was saved
     public boolean isSaved() {
         return saved;
     }
 
+    // Closes the dialog
     private void closeStage() {
         Stage stage = (Stage) userInfoLabel.getScene().getWindow();
         stage.close();

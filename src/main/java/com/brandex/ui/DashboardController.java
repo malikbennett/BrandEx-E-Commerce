@@ -10,10 +10,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
+// The controller class for handling the dashboard.
 public class DashboardController {
+
+    private static DashboardController instance;
 
     @FXML
     private Label welcomeLabel;
@@ -28,18 +30,20 @@ public class DashboardController {
 
     User user = AuthService.getInstance().getCurrentUser();
 
-    // Shared views
+    // Product catalog button
     @FXML
     private void showProducts() {
         loadView("store/ProductCatalog");
     }
 
+    // Home button
     @FXML
     void showHome() {
         searchField.setText("");
         handleSearch();
     }
 
+    // Cart button
     @FXML
     private void showCart() {
         try {
@@ -52,49 +56,43 @@ public class DashboardController {
         }
     }
 
+    // Order history button
     @FXML
     private void showOrders() {
         loadView("store/OrderHistory");
     }
 
+    // Profile button
     @FXML
     private void showProfile() {
         loadView("store/Profile");
     }
 
-    // Admin views
+    // Manage products button
     @FXML
     private void showManageProducts() {
         loadView("admin/ManageProducts");
     }
 
+    // Manage orders button
     @FXML
     private void showManageOrders() {
         loadView("admin/ManageOrders");
     }
 
+    // Manage users button
     @FXML
     private void showManageUsers() {
         loadView("admin/ManageUsers");
     }
 
+    // Product form button
     @FXML
     private void showProductForm() {
         loadView("admin/ProductForm");
     }
 
-    // allows for different views to be loaded
-    private void loadView(String fxml) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/brandex/fxml/" + fxml + ".fxml"));
-            Node view = loader.load();
-            contentArea.getChildren().setAll(view);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    // Search button
     @FXML
     private void handleSearch() {
         String query = searchField.getText();
@@ -102,9 +100,24 @@ public class DashboardController {
         showProducts();
     }
 
+    // allows for different views to be loaded
+    public static void loadView(String fxml) {
+        if (instance != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        instance.getClass().getResource("/com/brandex/fxml/" + fxml + ".fxml"));
+                Node view = loader.load();
+                instance.contentArea.getChildren().setAll(view);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // this runs automatically when Dashboard.fxml loads
     @FXML
     public void initialize() {
+        instance = this;
 
         // sets the welcome label to the current user's first name
         welcomeLabel.setText("Welcome, " + user.getFirstName());

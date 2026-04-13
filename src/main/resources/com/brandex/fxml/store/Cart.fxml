@@ -32,16 +32,13 @@
                   </HBox>
                </children>
             </HBox>
-            
             <Separator opacity="0.1" />
-            
             <VBox fx:id="cartBox" VBox.vgrow="ALWAYS">
                <children>
                   <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
                      <content>
                         <VBox alignment="CENTER" spacing="20.0">
                            <children>
-                              <!-- Cart items will be injected here -->
                            </children>
                            <padding>
                               <Insets bottom="10.0" top="10.0" />
@@ -53,7 +50,6 @@
             </VBox>
          </children>
       </VBox>
-      
       <VBox spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Separator opacity="0.1" />

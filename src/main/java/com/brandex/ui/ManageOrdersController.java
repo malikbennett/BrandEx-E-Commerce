@@ -3,9 +3,10 @@ package com.brandex.ui;
 import com.brandex.models.Order;
 import com.brandex.models.User;
 import com.brandex.models.enums.OrderStatus;
-import com.brandex.repository.UserRepository;
+import com.brandex.service.UserService;
 import com.brandex.service.AuthService;
 import com.brandex.service.OrderService;
+import com.brandex.utilities.StatusLabelHelper;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,19 +18,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
-/**
- * ManageOrdersController — Admin Order Processing Panel.
- *
- * Layout: split view with a full orders table on top and a detail / action
- * panel below. The FIFO queue (PENDING orders) is surfaced through the
- * "Dequeue Next" button which pulls the oldest pending order, shifts it to
- * PROCESSING, and shows its details so the admin can act on it.
- */
+// The controller class for handling the manage orders view.
 public class ManageOrdersController {
 
-    // ── Table ────────────────────────────────────────────────────────────────
     @FXML
     private TableView<Order> orderTable;
     @FXML
@@ -45,11 +37,9 @@ public class ManageOrdersController {
     @FXML
     private TableColumn<Order, Void> colActions;
 
-    // ── Queue badge ───────────────────────────────────────────────────────────
     @FXML
     private Label queueSizeLabel;
 
-    // ── Detail panel ─────────────────────────────────────────────────────────
     @FXML
     private Label detailOrderNum;
     @FXML
@@ -69,7 +59,6 @@ public class ManageOrdersController {
     @FXML
     private Label statusMessage;
 
-    // ── Action buttons ────────────────────────────────────────────────────────
     @FXML
     private Button dequeueBtn;
     @FXML
@@ -79,28 +68,22 @@ public class ManageOrdersController {
     @FXML
     private Button markDeliveredBtn;
 
-    // ── Search ───────────────────────────────────────────────────────────────
     @FXML
     private TextField searchField;
 
-    // ─────────────────────────────────────────────────────────────────────────
-
+    private final ObservableList<Order> allOrders = FXCollections.observableArrayList();
     private final OrderService orderService = OrderService.getInstance();
-    private final UserRepository userRepo = UserRepository.getInstance();
-    private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
+    private final UserService userService = UserService.getInstance();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
 
-    /** The order currently loaded in the detail panel. */
     private Order selectedOrder = null;
 
-    private final ObservableList<Order> allOrders = FXCollections.observableArrayList();
-
-    // =========================================================================
+    // Initializes the manage orders view
     @FXML
     public void initialize() {
-        // Guard: page is admin-only
         User currentUser = AuthService.getInstance().getCurrentUser();
         if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
-            setStatus("Access denied.", true);
+            StatusLabelHelper.showError(statusMessage, "Access denied.");
             disableAllActions();
             return;
         }
@@ -110,34 +93,31 @@ public class ManageOrdersController {
         setupSearch();
     }
 
-    // =========================================================================
-    // Table setup
-    // =========================================================================
-
+    // Sets up the table
     private void setupTable() {
-        colOrderNum.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOrderNumber()));
-        colCustomer.setCellValueFactory(c -> {
-            User u = userRepo.findById(c.getValue().getUserId());
-            String name = (u != null) ? u.getFirstName() + " " + u.getLastName() : c.getValue().getUserId();
-            return new SimpleStringProperty(name);
+        colOrderNum.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrderNumber()));
+        colCustomer.setCellValueFactory(cellData -> {
+            User user = userService.searchById(cellData.getValue().getUserId());
+            return new SimpleStringProperty(user != null ? user.getFullName() : cellData.getValue().getUserId());
         });
-        colStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus().getDisplayName()));
-        colTotal.setCellValueFactory(c -> new SimpleStringProperty(String.format("$%.2f", c.getValue().getTotal())));
-        colDate.setCellValueFactory(c -> {
-            if (c.getValue().getCreatedAt() != null)
-                return new SimpleStringProperty(c.getValue().getCreatedAt().format(fmt));
+        colStatus.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getStatus().getDisplayName()));
+        colTotal.setCellValueFactory(
+                cellData -> new SimpleStringProperty(String.format("$%.2f", cellData.getValue().getTotal())));
+        colDate.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getCreatedAt() != null)
+                return new SimpleStringProperty(cellData.getValue().getCreatedAt().format(formatter));
             return new SimpleStringProperty("—");
         });
 
         setupActionsColumn();
-
-        // Clicking a row loads it into the detail panel
         orderTable.getSelectionModel().selectedItemProperty().addListener((obs, old, next) -> {
             if (next != null)
                 loadDetailPanel(next);
         });
     }
 
+    // Sets up the actions column
     private void setupActionsColumn() {
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button viewBtn = new Button("View");
@@ -159,58 +139,58 @@ public class ManageOrdersController {
         });
     }
 
-    // =========================================================================
-    // Data loading
-    // =========================================================================
-
+    // Loads the orders
     private void loadOrders() {
-        allOrders.clear();
-        List<Order> orders = orderService.getAllOrders();
-        allOrders.addAll(orders);
-        orderTable.setItems(allOrders);
+        try {
+            if (!userService.isLoaded())
+                userService.loadUsers();
+            if (!orderService.isLoaded())
+                orderService.loadOrders();
 
-        // Reload FIFO queue
-        orderService.loadPendingQueue();
-        refreshQueueBadge();
+            allOrders.clear();
+            orderService.forEachOrder(order -> this.allOrders.add(order));
+            orderTable.setItems(allOrders);
 
-        setStatus("", false);
-        clearDetailPanel();
+            orderService.loadPendingQueue();
+            refreshQueueBadge();
+
+            StatusLabelHelper.clear(statusMessage);
+            clearDetailPanel();
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(statusMessage, "Database error: Could not load orders.");
+        }
     }
 
+    // Sets up the search
     private void setupSearch() {
-        searchField.textProperty().addListener((obs, old, query) -> {
-            if (query == null || query.isBlank()) {
+        searchField.textProperty().addListener((obs, old, val) -> {
+            if (val == null || val.isBlank()) {
                 orderTable.setItems(allOrders);
                 return;
             }
-            String q = query.toLowerCase();
+            String query = val.toLowerCase();
             ObservableList<Order> filtered = FXCollections.observableArrayList();
-            for (Order o : allOrders) {
-                boolean matchNum = o.getOrderNumber() != null && o.getOrderNumber().toLowerCase().contains(q);
-                boolean matchStatus = o.getStatus() != null && o.getStatus().getDisplayName().toLowerCase().contains(q);
-                User u = userRepo.findById(o.getUserId());
-                boolean matchName = u != null &&
-                        (u.getFirstName() + " " + u.getLastName()).toLowerCase().contains(q);
-                if (matchNum || matchStatus || matchName)
-                    filtered.add(o);
+            for (Order order : allOrders) {
+                User user = userService.searchById(order.getUserId());
+                if (order.getOrderNumber().toLowerCase().contains(query) ||
+                        order.getStatus().getDisplayName().toLowerCase().contains(query) ||
+                        user.getFullName().toLowerCase().contains(query))
+                    filtered.add(order);
             }
             orderTable.setItems(filtered);
         });
     }
 
-    // =========================================================================
-    // Detail panel
-    // =========================================================================
-
+    // Loads the detail panel
     private void loadDetailPanel(Order order) {
         selectedOrder = order;
 
         detailOrderNum.setText(order.getOrderNumber() != null ? order.getOrderNumber() : "—");
 
-        User u = userRepo.findById(order.getUserId());
-        if (u != null) {
-            detailCustomer.setText(u.getFirstName() + " " + u.getLastName());
-            detailEmail.setText(u.getEmail() != null ? u.getEmail() : "—");
+        User user = userService.searchById(order.getUserId());
+        if (user != null) {
+            detailCustomer.setText(user.getFullName());
+            detailEmail.setText(user.getEmail() != null ? user.getEmail() : "—");
         } else {
             detailCustomer.setText("Unknown");
             detailEmail.setText("—");
@@ -219,13 +199,14 @@ public class ManageOrdersController {
         detailAddress.setText(order.getShippingAddress() != null ? order.getShippingAddress() : "—");
         detailPayment.setText(order.getPaymentMethod() != null ? order.getPaymentMethod().toString() : "—");
         detailTotal.setText(String.format("$%.2f", order.getTotal()));
-        detailDate.setText(order.getCreatedAt() != null ? order.getCreatedAt().format(fmt) : "—");
+        detailDate.setText(order.getCreatedAt() != null ? order.getCreatedAt().format(formatter) : "—");
         detailStatus.setText(order.getStatus() != null ? order.getStatus().getDisplayName() : "—");
 
-        setStatus("", false);
+        StatusLabelHelper.clear(statusMessage);
         updateActionButtons();
     }
 
+    // Clears the detail panel
     private void clearDetailPanel() {
         selectedOrder = null;
         detailOrderNum.setText("—");
@@ -239,12 +220,14 @@ public class ManageOrdersController {
         updateActionButtons();
     }
 
+    // Refreshes the queue badge
     private void refreshQueueBadge() {
         int size = orderService.getPendingQueueSize();
         queueSizeLabel.setText(size + " pending in queue");
         dequeueBtn.setDisable(orderService.isPendingQueueEmpty());
     }
 
+    // Updates the action buttons
     private void updateActionButtons() {
         boolean noOrder = (selectedOrder == null);
         markProcessingBtn.setDisable(noOrder);
@@ -252,6 +235,7 @@ public class ManageOrdersController {
         markDeliveredBtn.setDisable(noOrder);
     }
 
+    // Disables all actions
     private void disableAllActions() {
         dequeueBtn.setDisable(true);
         markProcessingBtn.setDisable(true);
@@ -259,74 +243,96 @@ public class ManageOrdersController {
         markDeliveredBtn.setDisable(true);
     }
 
-    // =========================================================================
-    // Button handlers
-    // =========================================================================
-
-    /** Dequeue the oldest PENDING order from the FIFO queue and display it. */
+    // Dequeues the next order
     @FXML
     private void handleDequeue() {
         if (orderService.isPendingQueueEmpty()) {
-            setStatus("No pending orders in the queue.", false);
+            StatusLabelHelper.showSuccess(statusMessage, "No pending orders in the queue.");
             return;
         }
-        Order dequeued = orderService.dequeue();
-        if (dequeued == null) {
-            setStatus("Queue is empty.", false);
-            return;
+        try {
+            Order dequeued = orderService.dequeue();
+            if (dequeued == null) {
+                StatusLabelHelper.showSuccess(statusMessage, "Queue is empty.");
+                return;
+            }
+            // Refresh table so the status change is visible
+            orderService.reloadOrders();
+            loadOrders();
+            // Highlight the dequeued order in the table and detail panel
+            orderTable.getItems().stream()
+                    .filter(o -> o.getId().equals(dequeued.getId()))
+                    .findFirst()
+                    .ifPresent(o -> {
+                        orderTable.getSelectionModel().select(o);
+                        loadDetailPanel(o);
+                    });
+            StatusLabelHelper.showSuccess(statusMessage,
+                    "Order #" + dequeued.getOrderNumber() + " dequeued → Processing.");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(statusMessage, "Database error: Failed to dequeue order.");
         }
-        // Refresh table so the status change is visible
-        loadOrders();
-        // Highlight the dequeued order in the table and detail panel
-        orderTable.getItems().stream()
-                .filter(o -> o.getId().equals(dequeued.getId()))
-                .findFirst()
-                .ifPresent(o -> {
-                    orderTable.getSelectionModel().select(o);
-                    loadDetailPanel(o);
-                });
-        setStatus("Order #" + dequeued.getOrderNumber() + " dequeued → Processing.", false);
     }
 
+    // Marks the order as processing
     @FXML
     private void handleMarkProcessing() {
         if (selectedOrder == null)
             return;
-        orderService.updateStatus(selectedOrder, OrderStatus.PROCESSING);
-        refreshAfterStatusChange("Marked as Processing.");
+        try {
+            orderService.updateStatus(selectedOrder, OrderStatus.PROCESSING);
+            refreshAfterStatusChange("Marked as Processing.");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(statusMessage, "Database error: Failed to update status.");
+        }
     }
 
+    // Marks the order as shipped
     @FXML
     private void handleMarkShipped() {
         if (selectedOrder == null)
             return;
 
-        // Async email fires inside markAsShipped — UI stays responsive
-        orderService.markAsShipped(selectedOrder);
-
-        Platform.runLater(() -> {
-            refreshAfterStatusChange("Marked as Shipped. Shipping notification email sent.");
+        orderService.markAsShipped(selectedOrder, () -> {
+            Platform.runLater(
+                    () -> StatusLabelHelper.showSuccess(statusMessage, "Order Shipped. Notification email sent."));
+        }, error -> {
+            Platform.runLater(() -> StatusLabelHelper.showError(statusMessage, "Shipped, but EMAIL FAILED: " + error));
         });
+
+        refreshAfterStatusChange("Updating order status...");
     }
 
+    // Marks the order as delivered
     @FXML
     private void handleMarkDelivered() {
         if (selectedOrder == null)
             return;
-        orderService.updateStatus(selectedOrder, OrderStatus.DELIVERED);
-        refreshAfterStatusChange("Marked as Delivered.");
+
+        orderService.updateStatus(selectedOrder, OrderStatus.DELIVERED, () -> {
+            Platform.runLater(
+                    () -> StatusLabelHelper.showSuccess(statusMessage, "Order Delivered. Confirmation email sent."));
+        }, error -> {
+            Platform.runLater(
+                    () -> StatusLabelHelper.showError(statusMessage, "Delivered, but EMAIL FAILED: " + error));
+        });
+
+        refreshAfterStatusChange("Updating order status...");
     }
 
+    // Refreshes the orders
     @FXML
     private void handleRefresh() {
-        loadOrders();
-        setStatus("Orders refreshed.", false);
+        try {
+            orderService.reloadOrders();
+            loadOrders();
+            StatusLabelHelper.showSuccess(statusMessage, "Orders refreshed.");
+        } catch (com.brandex.database.DatabaseException e) {
+            StatusLabelHelper.showError(statusMessage, "Database error: Could not refresh orders.");
+        }
     }
 
-    // =========================================================================
-    // Helpers
-    // =========================================================================
-
+    // Refreshes after a status change
     private void refreshAfterStatusChange(String message) {
         String currentId = selectedOrder != null ? selectedOrder.getId() : null;
         loadOrders();
@@ -339,13 +345,6 @@ public class ManageOrdersController {
                         loadDetailPanel(o);
                     });
         }
-        setStatus(message, false);
-    }
-
-    private void setStatus(String message, boolean isError) {
-        statusMessage.setText(message);
-        statusMessage.setStyle(isError
-                ? "-fx-text-fill: #f44336;"
-                : "-fx-text-fill: #4caf50;");
+        StatusLabelHelper.showSuccess(statusMessage, message);
     }
 }

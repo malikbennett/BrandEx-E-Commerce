@@ -22,7 +22,6 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
          <children>
-            <!-- ── Top Header & Stats ────────────────────────────── -->
             <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="card-premium">
                <padding>
                   <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
@@ -36,11 +35,9 @@
                   </VBox>
                   <Region prefWidth="200.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="dequeueBtn" mnemonicParsing="false" onAction="#handleDequeue" prefHeight="40.0" styleClass="btn-brand" text="⬇  DEQUEUE NEXT" />
-                  <Button mnemonicParsing="false" onAction="#handleRefresh" prefHeight="40.0" text="⟳  REFRESH" />
+                  <Button mnemonicParsing="false" onAction="#handleRefresh" prefHeight="40.0" text="⟳  RELOAD" />
                </children>
             </HBox>
-
-            <!-- ── Table & Search Section ────────────────────────── -->
             <VBox spacing="16.0" styleClass="card-premium" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -66,8 +63,6 @@
                   </TableView>
                </children>
             </VBox>
-
-            <!-- ── Order Details Panel ───────────────────────────── -->
             <VBox spacing="20.0" styleClass="card-premium">
                <padding>
                   <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
@@ -91,25 +86,25 @@
                      <children>
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Order Number:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                         <Label fx:id="detailOrderNum" style="-fx-font-weight: bold;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Current Status:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                         <Label fx:id="detailStatus" style="-fx-font-weight: bold; -fx-text-fill: -brand-primary;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Customer Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                         <Label fx:id="detailCustomer" text="—" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Shipping Address:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <Label fx:id="detailAddress" text="—" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Contact Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                         <Label fx:id="detailEmail" text="—" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Payment Method:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label fx:id="detailPayment" text="—" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Order Amount:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                         <Label fx:id="detailTotal" style="-fx-font-weight: bold;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        
+
                         <Label style="-fx-text-fill: -brand-text-dim;" text="Created Date:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                         <Label fx:id="detailDate" text="—" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                      </children>

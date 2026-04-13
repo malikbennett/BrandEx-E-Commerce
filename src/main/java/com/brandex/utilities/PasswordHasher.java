@@ -3,10 +3,11 @@ package com.brandex.utilities;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
-// This utility class was created using the assistance of an AI language model, and is intended for educational purposes. It provides basic password hashing functionality using SHA-256.
+// It provides basic password hashing functionality using SHA-256.
+// This utility class was created using the assistance of an AI language model,
+// and is intended for educational purposes.
 public class PasswordHasher {
-
+    // Hashes a plain text password using SHA-256.
     public static String hash(String plainText) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -21,6 +22,7 @@ public class PasswordHasher {
         }
     }
 
+    // Checks if a plain text password matches a hash.
     public static boolean matches(String plainText, String hash) {
         return hash(plainText).equals(hash);
     }

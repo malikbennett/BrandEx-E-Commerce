@@ -20,7 +20,6 @@
                   <Label style="-fx-text-fill: -brand-text-dim;" text="Track and manage your past purchases" />
                </children>
             </VBox>
-            
             <VBox styleClass="card-premium" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -29,7 +28,6 @@
                   <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
                      <content>
                         <VBox fx:id="ordersContainer" spacing="15.0">
-                           <!-- Order items will be injected here -->
                         </VBox>
                      </content>
                   </ScrollPane>

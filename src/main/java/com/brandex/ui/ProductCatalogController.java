@@ -22,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
+// The controller class for handling the product catalog view.
 public class ProductCatalogController {
 
     @FXML
@@ -50,12 +51,14 @@ public class ProductCatalogController {
 
     private final ProductService productService = ProductService.getInstance();
 
+    // Initializes the product catalog view
     @FXML
     public void initialize() {
         loadProducts();
         loadFilters();
     }
 
+    // Builds a product card
     private void buildProductCard(Product product) {
         VBox card = new VBox(15);
         card.getStyleClass().add("product-card");
@@ -107,8 +110,9 @@ public class ProductCatalogController {
         productGrid.getChildren().add(card);
     }
 
+    // Loads the products
     private void loadProducts() {
-        if (productService.getProductsTree().isEmpty()) {
+        if (!productService.isLoaded()) {
             productService.loadProducts();
         }
         productGrid.getChildren().clear();
@@ -123,7 +127,10 @@ public class ProductCatalogController {
         }
     }
 
+    // Loads the filters
     private void loadFilters() {
+        brandCheckboxBox.getChildren().clear();
+        categoryCheckboxBox.getChildren().clear();
 
         // a set stores only unique elements
         Set<String> brands = new HashSet<>();
@@ -173,11 +180,13 @@ public class ProductCatalogController {
         }
     }
 
+    // Updates the price label
     private void updatePriceLabel() {
         priceLabelMin.setText(String.format("$%.0f", minPriceSlider.getValue()));
         priceLabelMax.setText(String.format("$%.0f", maxPriceSlider.getValue()));
     }
 
+    // Handles filtering the products
     @FXML
     private void handleFilters() {
         try {
@@ -218,5 +227,13 @@ public class ProductCatalogController {
             System.err.println("Error filtering products in Catalog: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // Handles refreshing the products
+    @FXML
+    private void handleRefresh() {
+        productService.reloadProducts();
+        loadProducts();
+        loadFilters();
     }
 }

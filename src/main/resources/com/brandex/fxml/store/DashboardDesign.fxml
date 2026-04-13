@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -50,19 +49,12 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="top-bar">
+                  <HBox alignment="CENTER" spacing="20.0" styleClass="top-bar">
                      <children>
-                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="search-field-modern" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER" prefWidth="450.0" spacing="12.0" styleClass="search-field-modern">
                            <children>
                               <Label style="-fx-opacity: 0.5;" text="🔍" />
                               <TextField fx:id="searchField" onKeyTyped="#handleSearch" promptText="Search for products, categories, or brands..." style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <HBox alignment="CENTER" spacing="12.0">
-                           <children>
-                              <ComboBox prefWidth="100.0" promptText="USD" styleClass="flat" />
-                              <ComboBox prefWidth="100.0" promptText="EN" styleClass="flat" />
                            </children>
                         </HBox>
                      </children>

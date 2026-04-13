@@ -77,7 +77,7 @@
 .top-bar {
     -fx-background-color: transparent;
     -fx-padding: 10px 24px;
-    -fx-alignment: center-left;
+    -fx-alignment: center;
 }
 
 .search-field-modern {
@@ -98,6 +98,6 @@
 
 .product-card:hover {
     -fx-border-color: -brand-primary;
-    -fx-border-width: 0.5px;
+    -fx-border-width: 1px;
     -fx-border-radius: 12px;
 }

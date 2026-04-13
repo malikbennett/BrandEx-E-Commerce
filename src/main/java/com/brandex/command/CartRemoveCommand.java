@@ -8,6 +8,7 @@ import com.brandex.repository.CartRepository;
 import com.brandex.service.CartService;
 import com.brandex.service.ProductService;
 
+// The command class for removing an item from the cart.
 public class CartRemoveCommand implements Command {
     private final LinkedList<CartItem> cartList;
     private final Cart cart;
@@ -18,6 +19,7 @@ public class CartRemoveCommand implements Command {
     private String cartItemId;
     private boolean wasDeleted = false;
 
+    // Constructor for the CartRemoveCommand class.
     public CartRemoveCommand(LinkedList<CartItem> cart, String productId, int quantity) {
         this.cartList = cart;
         this.cart = CartService.getInstance().getCurrentCart();
@@ -25,6 +27,7 @@ public class CartRemoveCommand implements Command {
         this.quantity = quantity;
     }
 
+    // Executes the command to remove an item from the cart.
     @Override
     public void execute() {
         CartItem item = this.cartList.search(this.productId, CartItem::getProductId);
@@ -53,6 +56,7 @@ public class CartRemoveCommand implements Command {
         CartService.getInstance().syncCartTotalWithDatabase();
     }
 
+    // Undoes the command to remove an item from the cart.
     @Override
     public void undo() {
         Product product = ProductService.getInstance().searchById(this.productId);

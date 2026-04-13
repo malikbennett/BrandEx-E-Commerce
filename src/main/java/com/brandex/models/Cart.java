@@ -2,6 +2,7 @@ package com.brandex.models;
 
 import java.time.OffsetDateTime;
 
+// The ADT Cart, which extends the ADT Model.
 public class Cart extends Model {
     private String userId;
     private double totalPrice;

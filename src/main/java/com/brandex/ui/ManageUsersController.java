@@ -22,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.time.format.DateTimeFormatter;
 
+// The controller class for handling the manage users view.
 public class ManageUsersController {
     @FXML
     private TableView<User> userTable;
@@ -48,22 +49,28 @@ public class ManageUsersController {
     @FXML
     private javafx.scene.control.TextField searchField;
 
+    private final ObservableList<User> allUsers = FXCollections.observableArrayList();
     private final UserService userService = UserService.getInstance();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
-    private final ObservableList<User> allUsers = FXCollections.observableArrayList();
-
+    // Initializes the manage users view
     @FXML
     public void initialize() {
+        User currentUser = AuthService.getInstance().getCurrentUser();
+        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
+            userTable.setDisable(true);
+            return;
+        }
+
         setupTable();
         loadUsers();
         setupSearch();
     }
 
+    // Sets up the table
     private void setupTable() {
         idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId()));
-        fullNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getFirstName() + " " + cellData.getValue().getLastName()));
+        fullNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
         emailColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
         usernameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUsername()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
@@ -82,6 +89,7 @@ public class ManageUsersController {
         setupActionsColumn();
     }
 
+    // Sets up the actions column
     private void setupActionsColumn() {
         actionsColumn.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button("Edit");
@@ -109,17 +117,17 @@ public class ManageUsersController {
         });
     }
 
+    // Loads the users
     private void loadUsers() {
-        if (AuthService.getInstance().getCurrentUser().getRole().equalsIgnoreCase("admin")
-                && userService.getUsersTree().isEmpty()) {
+        if (!userService.isLoaded())
             userService.loadUsers();
-        }
 
         allUsers.clear();
-        userService.forEachUser(allUsers::add);
+        userService.forEachUser(user -> this.allUsers.add(user));
         userTable.setItems(allUsers);
     }
 
+    // Sets up the search
     private void setupSearch() {
         searchField.textProperty().addListener((obs, old, val) -> {
             if (val == null || val.isBlank()) {
@@ -128,17 +136,18 @@ public class ManageUsersController {
             }
             String query = val.toLowerCase();
             ObservableList<User> filtered = FXCollections.observableArrayList();
-            for (User u : allUsers) {
-                if ((u.getFirstName() + " " + u.getLastName()).toLowerCase().contains(query)
-                        || u.getUsername().toLowerCase().contains(query)
-                        || u.getEmail().toLowerCase().contains(query)) {
-                    filtered.add(u);
+            for (User user : allUsers) {
+                if (user.getFullName().toLowerCase().contains(query)
+                        || user.getUsername().toLowerCase().contains(query)
+                        || user.getEmail().toLowerCase().contains(query)) {
+                    filtered.add(user);
                 }
             }
             userTable.setItems(filtered);
         });
     }
 
+    // Handles editing a user
     private void handleEditUser(User user) {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource("fxml/admin/EditUserDialog.fxml"));
@@ -165,5 +174,13 @@ public class ManageUsersController {
             e.printStackTrace();
             System.err.println("Error opening edit dialog: " + e.getMessage());
         }
+    }
+
+    // Handles refreshing the users
+    @FXML
+    private void handleRefresh() {
+        userService.reloadUsers();
+        loadUsers();
+        searchField.clear(); // Clear search on explicit refresh
     }
 }

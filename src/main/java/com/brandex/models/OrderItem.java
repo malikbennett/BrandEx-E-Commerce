@@ -1,15 +1,17 @@
 package com.brandex.models;
 
+// The ADT OrderItem, which extends the ADT Model.
 public class OrderItem extends Model {
-    private String cartId;
+    private String orderId;
     private String productId;
     private int quantity;
+    private double totalPrice;
 
     public OrderItem() {
     }
 
-    public String getCartId() {
-        return this.cartId;
+    public String getOrderId() {
+        return this.orderId;
     }
 
     public String getProductId() {
@@ -20,8 +22,12 @@ public class OrderItem extends Model {
         return this.quantity;
     }
 
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
+    public double getTotalPrice() {
+        return this.totalPrice;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public void setProductId(String productId) {
@@ -30,5 +36,9 @@ public class OrderItem extends Model {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

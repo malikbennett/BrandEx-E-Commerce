@@ -21,23 +21,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+// The controller class for handling the cart.
 public class CartController {
     private ModalPane modalPane;
     private Node cartView;
 
     @FXML
     private Label cartTotal;
-
     @FXML
     private VBox cartBox;
-
     CartService cartService = CartService.getInstance();
     ProductService productService = ProductService.getInstance();
 
+    // Initializes the cart view
     public void initialize() {
         loadCart();
     }
 
+    // Builds the cart view
     public void buildCartModal(CartItem cart) {
         Product product = productService.searchById(cart.getProductId());
         // the tile itself, has graphic, title, description, and action sections
@@ -93,32 +94,39 @@ public class CartController {
         cartTotal.setText(String.format("Total: $%.2f", cartService.getCartTotal()));
     }
 
+    // Loads the cart
     public void loadCart() {
-        if (cartService.getCartItems().isEmpty()) {
-            cartService.loadCart();
-        }
-        cartBox.getChildren().clear();
-
         try {
-            cartService.getCartItems().traverse(cartItem -> {
-                buildCartModal(cartItem);
-            });
+            if (!cartService.isLoaded())
+                cartService.loadCart();
+
+            cartBox.getChildren().clear();
+            cartService.getCartItems().traverse(cartItem -> buildCartModal(cartItem));
+
+            if (cartTotal != null) {
+                cartTotal.setText(String.format("Total: $%.2f", cartService.getCartTotal()));
+            }
+        } catch (com.brandex.database.DatabaseException e) {
+            cartBox.getChildren().clear();
+            if (cartTotal != null)
+                cartTotal.setText("Database Connection Error");
+            System.err.println("DB Error in CartView: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error loading items in Cart: " + e.getMessage());
             e.printStackTrace();
         }
+    }
 
-        if (cartTotal != null) {
-            cartTotal.setText(String.format("Total: $%.2f", cartService.getCartTotal()));
+    // Checks out the cart
+    @FXML
+    private void checkOutCart() {
+        if (!cartService.getCartItems().isEmpty()) {
+            closeCart();
+            DashboardController.loadView("store/Checkout");
         }
     }
 
-    @FXML
-    private void checkOutCart() {
-        CartService.getInstance().checkout();
-        closeCart();
-    }
-
+    // Closes the cart
     @FXML
     private void closeCart() {
         if (modalPane != null) {
@@ -126,18 +134,21 @@ public class CartController {
         }
     }
 
+    // Undos the last cart action
     @FXML
     private void undoCart() {
         CartService.getInstance().undo();
         loadCart();
     }
 
+    // Redos the last cart action
     @FXML
     private void redoCart() {
         CartService.getInstance().redo();
         loadCart();
     }
 
+    // Sets the modal pane and cart view
     public void setModalPane(ModalPane modalPane, Node cartView) {
         this.modalPane = modalPane;
         this.cartView = cartView;

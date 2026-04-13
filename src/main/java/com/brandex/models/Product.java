@@ -1,5 +1,6 @@
 package com.brandex.models;
 
+// The ADT Product, which extends the ADT Model.
 public class Product extends Model {
     private String name, description, category, brand, imageUrl;
     private double price, rating;

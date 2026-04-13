@@ -16,7 +16,6 @@
    <children>
       <VBox alignment="TOP_CENTER" maxWidth="900.0" spacing="30.0">
          <children>
-            <!-- ── Profile Header Card ────────────────────────────── -->
             <VBox alignment="CENTER" spacing="20.0" styleClass="card-premium">
                <padding>
                   <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
@@ -41,8 +40,6 @@
                   </VBox>
                </children>
             </VBox>
-
-            <!-- ── Details & Info Card Header ────────────────────── -->
             <VBox spacing="25.0" styleClass="card-premium">
                <padding>
                   <Insets bottom="35.0" left="40.0" right="40.0" top="35.0" />
@@ -50,7 +47,7 @@
                <children>
                   <Label style="-fx-font-weight: bold; -fx-font-size: 18;" text="Personal Information" />
                   <Separator opacity="0.1" />
-                  
+
                   <GridPane hgap="40.0" vgap="40.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -85,8 +82,6 @@
                   </GridPane>
                </children>
             </VBox>
-
-            <!-- ── Account Actions ──────────────────────────────── -->
             <HBox alignment="CENTER" spacing="20.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#handleEditProfile" prefHeight="50.0" prefWidth="180.0" styleClass="btn-brand" text="EDIT PROFILE" />

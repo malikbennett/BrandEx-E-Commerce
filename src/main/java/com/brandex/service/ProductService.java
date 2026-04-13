@@ -7,31 +7,44 @@ import com.brandex.datastructures.LinkedList;
 import com.brandex.models.Product;
 import com.brandex.repository.ProductRepository;
 
+// The service class for managing products.
 public class ProductService {
-
     private static ProductService instance;
+    private final BST<Product> productTree = new BST<>((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
     private final ProductRepository productRepo = ProductRepository.getInstance();
-    private final BST<Product> productTree = new BST<>(
-            (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
-
     private String searchQuery = "";
+    private boolean loaded = false;
 
+    // Returns the instance of the ProductService
     public static ProductService getInstance() {
         if (instance == null)
             instance = new ProductService();
         return instance;
     }
 
+    // Load all products from database
     public void loadProducts() {
-        this.productRepo.listProducts().traverse(product -> {
-            this.productTree.insert(product);
-        });
+        this.productRepo.listProducts().traverse(product -> this.productTree.insert(product));
+        this.loaded = true;
     }
 
+    // Reloads the products
+    public void reloadProducts() {
+        this.productTree.clear();
+        this.loadProducts();
+    }
+
+    // Returns true if the products are loaded
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    // Iterates over all products
     public void forEachProduct(Consumer<Product> action) {
         this.productTree.traverse(action);
     }
 
+    // Creates a new product
     public void createProduct(Product product) throws Exception {
         if (product == null)
             throw new Exception("Product cannot be null.");
@@ -44,6 +57,7 @@ public class ProductService {
         this.productTree.insert(product);
     }
 
+    // Updates a product
     public void updateProduct(Product product, String oldName, Runnable updateAction) throws Exception {
         if (product == null)
             throw new Exception("Product cannot be null.");
@@ -68,6 +82,7 @@ public class ProductService {
         this.productTree.insert(product);
     }
 
+    // Deletes a product
     public void deleteProduct(Product product) throws Exception {
         if (product == null)
             throw new Exception("Product cannot be null.");
@@ -79,6 +94,7 @@ public class ProductService {
         this.productTree.remove(product);
     }
 
+    // Searches for products by keyword
     public LinkedList<Product> searchByKeyword(String keyword) {
         if (keyword == null)
             throw new IllegalArgumentException("Keyword cannot be null.");
@@ -98,6 +114,7 @@ public class ProductService {
         return results;
     }
 
+    // Searches for a product by ID
     public Product searchById(String id) {
         final Product[] found = new Product[1];
         this.productTree.traverse(p -> {
@@ -108,18 +125,23 @@ public class ProductService {
         return found[0];
     }
 
+    // Returns the search query
     public String getSearchQuery() {
         return this.searchQuery;
     }
 
+    // Sets the search query
     public void setSearchQuery(String q) {
         this.searchQuery = q;
     }
 
+    // Clears the products
     public void clearProducts() {
         this.productTree.clear();
+        this.loaded = false;
     }
 
+    // Returns the products tree
     public BST<Product> getProductsTree() {
         return productTree;
     }
