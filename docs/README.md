@@ -1,7 +1,7 @@
 # BrandEx E-Commerce Platform
 
 > [!IMPORTANT]
-> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [docs/AI Disclosure.pdf](<docs/AI Disclosure.pdf>).
+> **AI Disclosure:** This project utilizes AI-assisted coding tools. A full disclosure of its use, as required by university policy, can be found in [AI Disclosure.pdf](<AI Disclosure.pdf>).
 
 A full-featured desktop E-Commerce application built with **JavaFX** and **PostgreSQL**, engineered with custom data structures and design patterns.
 
@@ -329,7 +329,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 6. On the OTP screen, enter the code from your email.
 7. You will be prompted to **set a permanent password** on first login.
 
-![Register Screen](docs/screenshots/register-screen.png)
+![Register Screen](screenshots/register-screen.png)
 
 #### Logging In
 
@@ -337,7 +337,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 2. Click **Login**.
 3. If your password has been reset by an admin, you will be required to change it before proceeding.
 
-![Login Screen](docs/screenshots/login-screen.png)
+![Login Screen](screenshots/login-screen.png)
 
 #### Viewing & Editing Your Profile
 
@@ -350,7 +350,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 4. Click **Change Password** to update your credentials.
 5. Click **Logout** to securely end your session.
 
-![Profile Page](docs/screenshots/profile-screen.png)
+![Profile Page](screenshots/profile-screen.png)
 
 ---
 
@@ -363,7 +363,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 3. Use the **Search Bar** at the top to filter products by name in real time.
 4. Clear the search bar and press Enter to show all products again.
 
-![Product Catalog](docs/screenshots/catalog-screen.png)
+![Product Catalog](screenshots/catalog-screen.png)
 
 #### Viewing Product Details
 
@@ -376,7 +376,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 - You can add the same item multiple times to increase quantity.
 - The item is immediately added to your session cart.
 
-![Product Card](docs/screenshots/product-card.png)
+![Product Card](screenshots/product-card.png)
 
 ### Cart Management
 
@@ -389,7 +389,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 5. Use **Redo** to re-apply a change.
 6. Click **Checkout** to proceed to the payment screen.
 
-![Cart Panel](docs/screenshots/cart-screen.png)
+![Cart Panel](screenshots/cart-screen.png)
 
 ---
 
@@ -403,7 +403,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
 4. Select a **Payment Method**.
 5. Click **Place Order** to finalize.
 
-![Checkout Screen](docs/screenshots/checkout-screen.png)
+![Checkout Screen](screenshots/checkout-screen.png)
 
 #### Viewing Order History
 
@@ -414,7 +414,7 @@ The resulting `BrandEx-1.0.exe` will appear in your project root.
    - Status (Pending, Shipped, Delivered)
    - Order Total
 
-![Order History Screen](docs/screenshots/order-history-screen.png)
+![Order History Screen](screenshots/order-history-screen.png)
 
 ---
 
@@ -429,7 +429,7 @@ Admin accounts have access to an extended navigation bar with management tools. 
 - A sortable table lists all products in the system.
 - Columns: ID, Name, Brand, Description, Price, Stock, Category, Rating, Image URL, Date Created, Actions.
 
-![Manage Products Table](docs/screenshots/product-table.png)
+![Manage Products Table](screenshots/product-table.png)
 
 #### Adding a New Product
 
@@ -439,7 +439,7 @@ Admin accounts have access to an extended navigation bar with management tools. 
 4. Click **Save** to create the product. It is immediately added to the catalog.
 5. Click **Cancel** to discard changes.
 
-![Add Product Form](docs/screenshots/add-product-card.png)
+![Add Product Form](screenshots/add-product-card.png)
 
 #### Editing a Product
 
@@ -448,7 +448,7 @@ Admin accounts have access to an extended navigation bar with management tools. 
 3. Modify any fields.
 4. Click **Save**. The product is updated in the database and the in-memory catalog simultaneously.
 
-![Edit Product Form](docs/screenshots/edit-product-card.png)
+![Edit Product Form](screenshots/edit-product-card.png)
 
 #### Deleting a Product
 
@@ -456,7 +456,7 @@ Admin accounts have access to an extended navigation bar with management tools. 
 2. A confirmation dialog appears: *"Are you sure you want to delete this product? This action cannot be undone."*
 3. Click **OK** to permanently delete. The product is removed from both the database and the live catalog.
 
-![Delete Confirmation Dialog](docs/screenshots/delete-product-dialoag.png)
+![Delete Confirmation Dialog](screenshots/delete-product-dialoag.png)
 
 ---
 
@@ -469,7 +469,7 @@ Navigate to: **Admin Nav → Manage Users**
 - A table lists all registered customer accounts.
 - Columns: Full Name, Email, Username, Status, Role, Phone, Address, Joined Date, Actions.
 
-![Manage Users Table](docs/screenshots/user-table.png)
+![Manage Users Table](screenshots/user-table.png)
 
 #### Editing a User's Status and Role
 
@@ -478,7 +478,7 @@ Navigate to: **Admin Nav → Manage Users**
 3. Modify the user's **Status** (Active, Suspended, Banned) and/or **Role** (customer, admin).
 4. Click **Save** to apply changes.
 
-![Edit User Dialog](docs/screenshots/edit-user-card.png)
+![Edit User Dialog](screenshots/edit-user-card.png)
 
 #### Resetting a User's Password
 
@@ -486,7 +486,7 @@ Navigate to: **Admin Nav → Manage Users**
 2. A temporary password is automatically generated and emailed to the user.
 3. The user's account is flagged with `force_pw_change = true`, requiring them to set a new password on next login.
 
-![Reset Password Dialog](docs/screenshots/reset-password-dialog.png)
+![Reset Password Dialog](screenshots/reset-password-dialog.png)
 
 ---
 
@@ -498,7 +498,7 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 - Process and update order statuses (Pending → Shipped → Delivered).
 - Send customer notifications upon status changes.
 
-![Manage Orders Screen](docs/screenshots/order-table.png)
+![Manage Orders Screen](screenshots/order-table.png)
 
 ---
 
@@ -510,7 +510,7 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 
 The Use Case Diagram illustrates the interactions between system actors (Customer, Admin) and the available system features.
 
-![Use Case Diagram](docs/diagrams/use-case.png)
+![Use Case Diagram](diagrams/use-case.png)
 
 *   **Guest**: Can view the login/register screen.
 *   **Customer**: Can browse products, manage cart, place orders, and view their profile.
@@ -522,7 +522,7 @@ The Use Case Diagram illustrates the interactions between system actors (Custome
 
 The Class Diagram illustrates the domain model, technical layers, and the relationships between key classes.
 
-**[View Full Detailed Class Diagram (PDF)](docs/diagrams/Class%20Diagram.pdf)**
+**[View Full Detailed Class Diagram (PDF)](diagrams/Class%20Diagram.pdf)**
 
 ---
 
@@ -530,7 +530,7 @@ The Class Diagram illustrates the domain model, technical layers, and the relati
 
 Illustrates the flow of messages through the system and the core business logic for key workflows like Registration and Checkout.
 
-![Process Diagram](docs/diagrams/image.png)
+![Process Diagram](diagrams/image.png)
 
 ---
 
