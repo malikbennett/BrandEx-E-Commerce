@@ -28,9 +28,9 @@
                   <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
                </padding>
             </HBox>
-            <VBox spacing="16.0" styleClass="card-premium">
+            <VBox spacing="16.0" styleClass="card-premium" VBox.vgrow="ALWAYS">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="20.0">
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
                      <children>
                         <TextField fx:id="searchField" prefHeight="40.0" prefWidth="350.0" promptText="Search by Product ID, Brand, Name, or Category..." styleClass="search-field-modern" />
                         <Region prefWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -38,7 +38,7 @@
                         <Button fx:id="addProductBtn" mnemonicParsing="false" onAction="#handleAddProduct" prefHeight="40.0" styleClass="btn-brand" text="ADD" />
                      </children>
                   </HBox>
-                  <TableView fx:id="productsTable" minHeight="750.0" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="idColumn" editable="false" prefWidth="100.0" text="ID" />
                       <TableColumn fx:id="nameColumn" editable="false" prefWidth="150.0" text="NAME" />

@@ -129,7 +129,6 @@ public class DashboardController {
         } else {
             adminControls.setVisible(false);
             adminControls.setManaged(false);
-
         }
         showProducts();
     }

@@ -48,15 +48,15 @@ BrandEx is a desktop-based E-Commerce platform for browsing, purchasing, and man
 
 ### Stack
 
-| Layer | Technology |
-|---|---|
-| Language | Java 25 |
-| UI Framework | JavaFX 25 |
-| UI Theme | AtlantaFX (Cupertino Dark) |
-| Database | PostgreSQL |
-| Build Tool | Apache Maven |
-| Email | Jakarta Mail |
-| Packaging | `jpackage` (Windows EXE/MSI) |
+| Layer        | Technology                   |
+| ------------ | ---------------------------- |
+| Language     | Java 25                      |
+| UI Framework | JavaFX 25                    |
+| UI Theme     | AtlantaFX (Cupertino Dark)   |
+| Database     | PostgreSQL                   |
+| Build Tool   | Apache Maven                 |
+| Email        | Jakarta Mail                 |
+| Packaging    | `jpackage` (Windows EXE/MSI) |
 
 ### Package Structure
 
@@ -125,27 +125,29 @@ com.brandex/
 
 ### Design Patterns in Use
 
-| Pattern | Where Used |
-|---|---|
-| **Singleton** | All Services and Repositories |
-| **Repository** | `ProductRepository`, `UserRepository`, `CartRepository`, `OrderRepository` |
-| **Service Layer** | `AuthService`, `ProductService`, `CartService`, `OrderService`, `UserService` |
-| **Command Pattern** | Cart add/remove with full undo/redo support |
-| **BST (Binary Search Tree)** | In-memory product and user stores; efficient sorted traversal |
-| **Linked List** | Cart item storage |
-| **Stack** | Undo/Redo command history |
+| Pattern                      | Where Used                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| **Singleton**                | All Services and Repositories                                                 |
+| **Repository**               | `ProductRepository`, `UserRepository`, `CartRepository`, `OrderRepository`    |
+| **Service Layer**            | `AuthService`, `ProductService`, `CartService`, `OrderService`, `UserService` |
+| **Command Pattern**          | Cart add/remove with full undo/redo support                                   |
+| **BST (Binary Search Tree)** | In-memory product and user stores; efficient sorted traversal                 |
+| **Linked List**              | Cart item storage                                                             |
+| **Stack**                    | Undo/Redo command history                                                     |
 
 ---
 
 ## System Requirements
 
 ### End User (Running the Installer)
+
 - **OS**: Windows 10 or later (64-bit)
 - **Memory**: 4 GB RAM minimum (8 GB recommended)
 - **Storage**: 300 MB free disk space
 - **Network**: Internet connection for product images and email notifications.
 
 ### Developer (Building from Source)
+
 - **JDK**: Java 25+
 - **Build Tool**: Apache Maven 3.8+
 - **Database**: PostgreSQL 14+
@@ -158,11 +160,13 @@ com.brandex/
 ### Database Setup
 
 1. **Install PostgreSQL** and create a new database:
+
    ```sql
    CREATE DATABASE brandex;
    ```
 
 2. **Run the schema script** to create all required tables:
+
    ```sql
    -- Users table
    CREATE TABLE users (
@@ -240,11 +244,13 @@ com.brandex/
      created_at TIMESTAMPTZ DEFAULT NOW()
    );
    ```
+
 ---
 
 ### Configuration
 
 The application reads from a `config.properties` file located at:
+
 ```
 src/main/resources/com/brandex/config.properties
 ```
@@ -265,18 +271,31 @@ email.user=your-email@gmail.com
 email.password=your-gmail-app-password
 ```
 
-> **Note on Gmail App Passwords:** To use Gmail for sending OTP and notification emails, enable 2-Factor Authentication on your Google account, then create an "App Password" under your Google Account Security settings. Use that 16-character password in `mail.password`.
+> [!NOTE]
+> **Configuration File:** The `config.properties` file containing the environment-specific database and email credentials **will be provided separately during the project submission**. Please ensure this file is placed in `src/main/resources/com/brandex/` before attempting to build or run the source code.
+
+> **Gmail App Passwords:** To use Gmail for sending OTP and notification emails, enable 2-Factor Authentication on your Google account, then create an "App Password" under your Google Account Security settings. Use that 16-character password in `mail.password`.
 
 ---
 
 ### Running the Application
 
 **Option 1 — Via Maven (Development)**
+
 ```bash
 mvn clean javafx:run
 ```
 
+> [!IMPORTANT]
+> **Prerequisites for Maven:** You must have **Apache Maven** installed on your system to run the `mvn clean javafx:run` command. Alternatively, if you are using **VS Code**, you can install the **Extension Pack for Java** and run the application directly from the editor by clicking "Run" above the `main` method in `App.java`.
+
+#### Installation Links:
+
+- [Download Java JDK 25+](https://jdk.java.net/25/)
+- [Download Apache Maven](https://maven.apache.org/download.cgi)
+
 **Option 2 — Via the Windows Installer (End Users)**
+
 1. Download the `BrandEx-1.0.exe` from the [Releases](https://github.com/malikbennett/BrandEx-E-Commerce/releases) page.
 2. Run the installer.
    > [!NOTE]
@@ -456,7 +475,7 @@ Admin accounts have access to an extended navigation bar with management tools. 
 #### Deleting a Product
 
 1. Click the **Delete** button on the desired product row.
-2. A confirmation dialog appears: *"Are you sure you want to delete this product? This action cannot be undone."*
+2. A confirmation dialog appears: _"Are you sure you want to delete this product? This action cannot be undone."_
 3. Click **OK** to permanently delete. The product is removed from both the database and the live catalog.
 
 ![Delete Confirmation Dialog](screenshots/delete-product-dialoag.png)
@@ -495,7 +514,7 @@ Navigate to: **Admin Nav → Manage Users**
 
 ### Order Processing
 
-Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
+Navigate to: **Admin Nav → Manage Orders**
 
 - View all pending orders in a queue.
 - Process and update order statuses (Pending → Shipped → Delivered).
@@ -507,17 +526,15 @@ Navigate to: **Admin Nav → Manage Orders** *(Feature in development)*
 
 ## UML Diagrams
 
-
-
 ### Use Case Diagram
 
 The Use Case Diagram illustrates the interactions between system actors (Customer, Admin) and the available system features.
 
 ![Use Case Diagram](diagrams/use-case.png)
 
-*   **Guest**: Can view the login/register screen.
-*   **Customer**: Can browse products, manage cart, place orders, and view their profile.
-*   **Administrator**: Has all Customer capabilities plus product CRUD, user management, and order processing.
+- **Guest**: Can view the login/register screen.
+- **Customer**: Can browse products, manage cart, place orders, and view their profile.
+- **Administrator**: Has all Customer capabilities plus product CRUD, user management, and order processing.
 
 ---
 
@@ -541,14 +558,14 @@ Illustrates the flow of messages through the system and the core business logic 
 
 ### Common Setup Issues
 
-| Problem | Likely Cause | Solution |
-|---|---|---|
-| `Error loading FXML` on startup | Missing or corrupt resource files | Ensure you built from source with `mvn clean package` |
-| `Connection refused` (DB error) | PostgreSQL not running | Start your PostgreSQL service and verify credentials in `config.properties` |
-| Application opens but is blank | FXML controller binding issue | Check console for a `NullPointerException`, ensure all `fx:id` values are correct |
-| OTP email not received | SMTP credentials invalid | Regenerate your Gmail App Password and update `config.properties` |
-| Installer runs but app crashes | Missing JavaFX dependencies in package | Rebuild with `jpackage` using the full `target/dependency` folder as `--input` |
-| `NoClassDefFoundError` for JavaFX | Main class extends `Application` directly | Ensure the entry point is `com.brandex.Main`, not `com.brandex.App` |
+| Problem                           | Likely Cause                              | Solution                                                                          |
+| --------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `Error loading FXML` on startup   | Missing or corrupt resource files         | Ensure you built from source with `mvn clean package`                             |
+| `Connection refused` (DB error)   | PostgreSQL not running                    | Start your PostgreSQL service and verify credentials in `config.properties`       |
+| Application opens but is blank    | FXML controller binding issue             | Check console for a `NullPointerException`, ensure all `fx:id` values are correct |
+| OTP email not received            | SMTP credentials invalid                  | Regenerate your Gmail App Password and update `config.properties`                 |
+| Installer runs but app crashes    | Missing JavaFX dependencies in package    | Rebuild with `jpackage` using the full `target/dependency` folder as `--input`    |
+| `NoClassDefFoundError` for JavaFX | Main class extends `Application` directly | Ensure the entry point is `com.brandex.Main`, not `com.brandex.App`               |
 
 ---
 
@@ -559,8 +576,10 @@ Illustrates the flow of messages through the system and the core business logic 
 ---
 
 ## 📬 Developers
+
 - [Malik Bennett](https://github.com/malikbennett)
 - [Ethan Dixon](https://github.com/powdem123)
 - [Dylan Lee-Sue](https://github.com/dLyn-Sue)
 - [Twyane Campbell](https://github.com/TwyaneCampbell)
+
 ---
