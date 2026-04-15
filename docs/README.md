@@ -298,8 +298,8 @@ mvn clean javafx:run
 
 1. Download the `BrandEx-1.0.exe` from the [Releases](https://github.com/malikbennett/BrandEx-E-Commerce/releases) page.
 2. Run the installer.
-   > [!NOTE]
-   > **Security Note:** Because this is an educational project, the installer is not digitally signed. You may see a Windows SmartScreen warning stating "Windows protected your PC." To proceed, click **"More info"** and then **"Run anyway"**.
+> [!NOTE]
+> **Security Note:** Because this is an educational project, the installer is not digitally signed. You may see a Windows SmartScreen warning stating "Windows protected your PC." To proceed, click **"More info"** and then **"Run anyway"**.
 3. Follow the prompts to complete installation.
 4. Launch **BrandEx** from the Desktop or Start Menu shortcut.
 
